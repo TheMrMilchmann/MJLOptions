@@ -21,8 +21,8 @@ import javax.annotation.Nullable;
 /**
  * An {@code Option} is a parameter that is interpreted key-based.
  *
- * <p>All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z][A-Za-z0-9]*`). These keys
- * are also referred to as "long tokens" throughout this document.</p>
+ * <p>All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z]([A-Za-z0-9]|-)*`). These
+ * keys are also referred to as "long tokens" throughout this document.</p>
  *
  * <p>Additionally it is possible to use a single alphabetic character as alternate case-sensitive key. These keys are
  * also referred as "short tokens" throughout this document.</p>

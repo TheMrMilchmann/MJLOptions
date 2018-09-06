@@ -32,7 +32,8 @@ import javax.annotation.Nullable;
  */
 public final class OptionParser {
 
-    private static final String REGEX_OPTION = "(?:-|--)([A-Za-z0-9]+)(?:=(.*))?";
+    /* Just used for parsing. This is not the actual spec compliant regex for options in general. */
+    private static final String REGEX_OPTION = "(?:-|--)([A-Za-z]([A-Za-z0-9]|-)*)(?:=(.*))?";
     private static final Pattern PATTERN_OPTION = Pattern.compile(REGEX_OPTION);
 
     /**
@@ -86,7 +87,7 @@ public final class OptionParser {
                     if (!optMatcher.matches()) throw new ParsingException(); // TODO err
 
                     String token = optMatcher.group(1);
-                    String rawValue = optMatcher.group(2);
+                    String rawValue = optMatcher.group(3);
                     Option<?> opt = this.pool.getOption(token);
 
                     if (opt == null) throw new ParsingException("Unknown long token '" + token + "'.");
@@ -112,7 +113,7 @@ public final class OptionParser {
                     if (!optMatcher.matches()) throw new ParsingException(); // TODO err
 
                     String tokens = optMatcher.group(1);
-                    String rawValue = optMatcher.group(2);
+                    String rawValue = optMatcher.group(3);
                     List<Option<?>> opts = new ArrayList<>(tokens.length());
 
                     for (char token : tokens.toCharArray()) {

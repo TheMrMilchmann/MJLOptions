@@ -4,7 +4,7 @@
 [![Build Status](https://img.shields.io/travis/TheMrMilchmann/MJLOptions.svg?style=flat-square)](https://travis-ci.org/TheMrMilchmann/MJLOptions)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.mjl/mjl-options.svg?style=flat-square&label=maven%20central)](https://maven-badges.herokuapp.com/maven-central/com.github.themrmilchmann.mjl/mjl-options)
 
-A **m**inmal **J**ava **l**ibrary providing a convenient way to parse command line parameters.
+A **m**inmal **J**ava **l**ibrary which provides a convenient way to parse command line parameters.
 
 MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
 predictable format.

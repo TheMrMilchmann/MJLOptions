@@ -133,7 +133,7 @@ publishing {
 
             pom {
                 name.set(project.name)
-                description.set("A **m**inmal **J**ava **l**ibrary providing a convenient way to parse command line parameters.")
+                description.set("A minimal Java library which provides a convenient way to parse command line parameters.")
                 packaging = "jar"
                 url.set("https://github.com/TheMrMilchmann/MJLOptions")
 

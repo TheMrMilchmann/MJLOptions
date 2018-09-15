@@ -16,7 +16,6 @@
 package com.github.themrmilchmann.mjl.options;
 
 import javax.annotation.Nullable;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

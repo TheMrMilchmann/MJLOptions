@@ -31,10 +31,12 @@ public final class OptionSet {
 
     private final OptionPool pool;
     private final Map<Object, Object> values;
+    private final Map<String, String> dynamics;
 
-    public OptionSet(OptionPool pool, Map<Object, Object> values) {
+    OptionSet(OptionPool pool, Map<Object, Object> values, Map<String, String> dynamics) {
         this.pool = pool;
         this.values = values;
+        this.dynamics = dynamics;
     }
 
     /**
@@ -196,6 +198,17 @@ public final class OptionSet {
         }
 
         return res;
+    }
+
+    /**
+     * Returns an immutable view of the dynamic option in this set.
+     *
+     * @return  an immutable view of dynamic options in this set
+     *
+     * @since   0.2.0
+     */
+    public Map<String, String> getDynamicOptions() {
+        return this.dynamics;
     }
 
     /**

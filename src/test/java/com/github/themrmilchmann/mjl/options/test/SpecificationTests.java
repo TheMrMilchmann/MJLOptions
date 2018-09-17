@@ -283,4 +283,23 @@ public final class SpecificationTests {
         expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-mo", value));
     }
 
+    @Test(groups = TEST_GROUPS_PARSING)
+    public void sec34ParseDynamicOption_MarkerUse() {
+        OptionSet set = OptionParser.parse(optPool, "-$dynamic");
+        assertTrue(set.getDynamicOptions().containsKey("dynamic"));
+        assertNull(set.getDynamicOptions().get("dynamic"));
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec34ParseDynamicOption_EqualsValue(String value) {
+        OptionSet set = OptionParser.parse(optPool, "-$dynamic=" + value);
+        assertTrue(set.getDynamicOptions().containsKey("dynamic"));
+        assertEquals(set.getDynamicOptions().get("dynamic"), stripQuotes(value));
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec34ParseDynamicOption_WhitespaceValue(String value) {
+        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-$dynamic", value));
+    }
+
 }

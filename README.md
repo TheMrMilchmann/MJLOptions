@@ -9,6 +9,7 @@ A **m**inmal **J**ava **l**ibrary which provides a convenient way to parse comma
 MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
 predictable format.
 
+
 ## Specification
 
 1. **Arguments**<br>
@@ -79,6 +80,14 @@ predictable format.
         - When marker options and regular options are chained parsing continues as specified for regular options.
         - When marker options and marker-only options are chained parsing continues as specified for marker-only
         options.
+        
+    1. **Parsing Options Dynamically**<br>
+        A parameter prefixed with a hyphen-dollar delimiter (`-$`) is interpreted as a dynamic option.
+        All characters following the delimiter until either any whitespace character or an equals character (`=`) are
+        interpreted as token for the option.
+        
+        Iff the token is followed immediately by an equals character the characters following this character are
+        interpreted as value and parsed as specified in _Parsing Option Values_.
 
     1. **Parsing Option Values**<br>
         Parsing branches depending on the type of the option.
@@ -131,6 +140,7 @@ option
     : simpleOption
     : markerOption
     : markerOnlyOption
+    : dynamicOption
     ;
     
 simpleOption
@@ -150,6 +160,10 @@ markerOption
     : markerOnlyOption
     ;
 
+dynamicOption
+    : "-$" LongOptionToken ("=" String)?
+    ;
+
 ShortOptionToken
     : <any alphabetic character>
     ;
@@ -163,6 +177,7 @@ String
     : "\"" <any character (possibly backslash-escaped)>? "\""
     ;
 ```
+
 
 ## License
 

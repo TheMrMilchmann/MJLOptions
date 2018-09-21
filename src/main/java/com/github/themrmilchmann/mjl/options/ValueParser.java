@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
  *
  * @author  Leon Linhart
  */
+@FunctionalInterface
 public interface ValueParser<T> {
 
     /**

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 /**
- * Provides a minimal EventBus for publish-subscribe-style communication between components.
+ * A minmal Java library providing a convenient way to parse command line parameters.
+ *
+ * <p>MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
+ * predictable format.</p>
  *
  * @see com.github.themrmilchmann.mjl.options.OptionParser
  *

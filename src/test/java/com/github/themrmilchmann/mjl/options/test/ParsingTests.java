@@ -15,6 +15,7 @@
  */
 package com.github.themrmilchmann.mjl.options.test;
 
+import com.github.themrmilchmann.mjl.options.Argument;
 import com.github.themrmilchmann.mjl.options.Option;
 import com.github.themrmilchmann.mjl.options.OptionParser;
 import com.github.themrmilchmann.mjl.options.OptionPool;
@@ -31,7 +32,9 @@ public final class ParsingTests {
 
     private static final String TEST_GROUPS_PARSING = "parsing";
 
-    private OptionPool optPool;
+    private OptionPool argPool, optPool;
+
+    private Argument<String> arg0;
 
     private Option<String> optRegular,      optRegularAlt,
                            optMarker,       optMarkerAlt,
@@ -39,6 +42,10 @@ public final class ParsingTests {
 
     @BeforeGroups(TEST_GROUPS_PARSING)
     private void initParsingTests() {
+        this.argPool = OptionPool.builder()
+            .withArg(this.arg0 = Argument.builder(ValueParser.STRING, true).build())
+            .build();
+
         this.optPool = OptionPool.builder()
             .withOption(this.optRegular = Option.builder("regular", ValueParser.STRING).withShortToken('r').build())
             .withOption(this.optMarker = Option.builder("marker", ValueParser.STRING).withShortToken('m').withMarkerValue("markerValue").build())
@@ -300,6 +307,14 @@ public final class ParsingTests {
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
     public void sec34ParseDynamicOption_WhitespaceValue(String value) {
         expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-$dynamic", value));
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec36ParseArgument(String value) {
+        OptionSet set = OptionParser.parse(argPool, value);
+
+        assertTrue(set.isSet(arg0));
+        assertEquals(set.get(arg0), stripQuotes(value));
     }
 
 }

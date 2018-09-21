@@ -36,7 +36,7 @@ public final class OptionParser {
     static final String REGEX_LONG_TOKEN = "[A-Za-z]([A-Za-z0-9]|-|\\.)*";
 
     /* Just used for parsing. This is not the actual spec compliant regex for options in general. */
-    private static final String REGEX_OPTION = "(?:--|-\\$|-)" + REGEX_LONG_TOKEN + "(?:=(.*))?";
+    private static final String REGEX_OPTION = "(?:--|-\\$|-)(" + REGEX_LONG_TOKEN + ")(?:=(.*))?";
     private static final Pattern PATTERN_OPTION = Pattern.compile(REGEX_OPTION);
 
     /**
@@ -91,7 +91,7 @@ public final class OptionParser {
                     } else {
                         throw new ParsingException("Duplicate '--' escape sequence. Options parsing may only be terminated once!");
                     }
-                } else {
+                } else if (fragment.matches("-[^0-9].*")) {
                     Matcher optMatcher = PATTERN_OPTION.matcher(fragment);
                     if (!optMatcher.matches()) throw new ParsingException(); // TODO err
 
@@ -153,9 +153,9 @@ public final class OptionParser {
                                 this.values.put(opt, value);
                             }
                         }
-                    } else {
-                        this.parseArgument();
                     }
+                } else {
+                    this.parseArgument();
                 }
             }
         }

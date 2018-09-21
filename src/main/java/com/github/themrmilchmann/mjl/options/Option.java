@@ -239,7 +239,7 @@ public final class Option<T> {
 
         private Builder(String longToken, ValueParser<T> parser) {
             this.longToken = Objects.requireNonNull(longToken);
-            if (longToken.matches(OptionParser.REGEX_LONG_TOKEN)) throw new IllegalArgumentException("Invalid long option token.");
+            if (!longToken.matches(OptionParser.REGEX_LONG_TOKEN)) throw new IllegalArgumentException("Invalid long option token.");
 
             this.parser = Objects.requireNonNull(parser);
         }

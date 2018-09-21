@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
-public final class SpecificationTests {
+public final class ParsingTests {
 
     private static final String TEST_GROUPS_PARSING = "parsing";
 

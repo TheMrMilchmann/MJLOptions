@@ -32,7 +32,7 @@ predictable format.
 
 1. **Options**<br>
     Options are key-based interpreted parameters.<br>
-    All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z]([A-Za-z0-9]|-)*`). These keys
+    All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z]([A-Za-z0-9]|-|\.)*`). These keys
     are also referred to as "long tokens" throughout this document.<br>
     Additionally it is possible to use a single alphabetic character as alternate case-sensitive key. These keys are
     also referred as "short tokens" throughout this document.

@@ -62,6 +62,9 @@ public final class Option<T> {
      *
      * @return  a builder instance
      *
+     * @throws IllegalArgumentException if the long option token is invalid
+     * @throws NullPointerException     if {@code null} is passed to any of the parameters
+     *
      * @since   0.1.0
      */
     public static <T> Builder<T> builder(String longToken, ValueParser<T> parser) {
@@ -236,6 +239,8 @@ public final class Option<T> {
 
         private Builder(String longToken, ValueParser<T> parser) {
             this.longToken = Objects.requireNonNull(longToken);
+            if (longToken.matches(OptionParser.REGEX_LONG_TOKEN)) throw new IllegalArgumentException("Invalid long option token.");
+
             this.parser = Objects.requireNonNull(parser);
         }
 
@@ -313,9 +318,13 @@ public final class Option<T> {
          *
          * @return  this builder instance
          *
+         * @throws IllegalArgumentException if the given token is invalid
+         *
          * @since   0.1.0
          */
         public Builder<T> withShortToken(char shortToken) {
+            if (!Character.isAlphabetic(shortToken)) throw new IllegalArgumentException("Short option tokens must be alphabetic.");
+
             this.shortToken = shortToken;
 
             return this;

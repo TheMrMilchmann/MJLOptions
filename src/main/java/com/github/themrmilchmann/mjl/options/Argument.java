@@ -57,6 +57,8 @@ public final class Argument<T> {
      *
      * @return  a builder instance
      *
+     * @throws NullPointerException if {@code null} is passed to any of the parameters
+     *
      * @since   0.1.0
      */
     public static <T> Builder<T> builder(ValueParser<T> parser) {
@@ -71,6 +73,8 @@ public final class Argument<T> {
      * @param isOptional    whether or not the argument is optional
      *
      * @return  a builder instance
+     *
+     * @throws NullPointerException if {@code null} is passed to any of the parameters
      *
      * @since   0.1.0
      */

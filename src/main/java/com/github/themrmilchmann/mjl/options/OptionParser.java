@@ -33,8 +33,10 @@ import javax.annotation.Nullable;
  */
 public final class OptionParser {
 
+    static final String REGEX_LONG_TOKEN = "[A-Za-z]([A-Za-z0-9]|-|\\.)*";
+
     /* Just used for parsing. This is not the actual spec compliant regex for options in general. */
-    private static final String REGEX_OPTION = "(?:--|-\\$|-)([A-Za-z]([A-Za-z0-9]|-|\\.)*)(?:=(.*))?";
+    private static final String REGEX_OPTION = "(?:--|-\\$|-)" + REGEX_LONG_TOKEN + "(?:=(.*))?";
     private static final Pattern PATTERN_OPTION = Pattern.compile(REGEX_OPTION);
 
     /**

@@ -1,5 +1,9 @@
-### 0.1.0
+### 0.2.0
 
-_2018 Aug 26_
+_2018 Sep 26_
 
-The first official release.
+#### Improvements
+
+- Added support for hyphen characters (`-`) and dot characters (`.`) in long options tokens.
+- Added support for dynamically parsed options.
+- Added improved parameter validation.

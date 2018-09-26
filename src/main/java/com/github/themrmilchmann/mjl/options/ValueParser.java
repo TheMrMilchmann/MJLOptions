@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  *
  * <p>This class contains predefined parsers for frequently used primitives.</p>
  *
- * @param <T>
+ * @param <T>   the type of the parsed value
  *
  * @since   0.1.0
  *

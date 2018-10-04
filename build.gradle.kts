@@ -209,7 +209,6 @@ data class Deployment(
 )
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 

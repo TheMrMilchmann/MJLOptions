@@ -10,6 +10,20 @@ MJL Options comes with a custom specification for command line parameters that i
 predictable format.
 
 
+## Installing
+
+Running the build requires JDK 8 or later. Additionally, a local copy of JDK 9 is required. The buildscript is trying to
+discover this copy by inspecting the following environment variables: `JDK9_HOME`, `JAVA9_HOME`, `JDK_19`, `JDK_9`.
+
+Starting the actual build is simply a matter of invoking the respective Gradle tasks. For example: In order to run a
+full build of the project, call
+
+    ./gradlew build
+
+Additionally, in order to reproduce snapshot and release builds it is required to supply the build with a an additional
+parameter instead. This should generally be done on a per-build basis by adding `-Psnapshot` or `-Prelease` to the
+command.
+
 ## Specification
 
 1. **Arguments**<br>

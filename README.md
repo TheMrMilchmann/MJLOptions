@@ -10,6 +10,8 @@ later).
 MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
 predictable format.
 
+[JavaDoc for MJL Options.](https://themrmilchmann.github.io/docs/index.html)
+
 
 ## Installing
 
@@ -24,6 +26,7 @@ full build of the project, call
 Additionally, in order to reproduce snapshot and release builds it is required to supply the build with a an additional
 parameter instead. This should generally be done on a per-build basis by adding `-Psnapshot` or `-Prelease` to the
 command.
+
 
 ## Specification
 
@@ -119,6 +122,7 @@ command.
     1. **Escaping Option Parsing**<br>
         All parameters following a parser escape symbol, a parameter consisting of just a double-hyphen delimiter
         (`--`), are interpreted as arguments.
+
 
 ## Grammar
 

@@ -24,11 +24,23 @@ package com.github.themrmilchmann.mjl.options;
  */
 public final class ParsingException extends RuntimeException {
 
-    ParsingException() {
+    /**
+     * Creates a new {@code ParsingException}.
+     *
+     * @since   0.3.0
+     */
+    public ParsingException() {
         super();
     }
 
-    ParsingException(String message) {
+    /**
+     * Creates a new {@code ParsingException}.
+     *
+     * @param message   a detailed error message
+     *
+     * @since   0.3.0
+     */
+    public ParsingException(String message) {
         super(message);
     }
 

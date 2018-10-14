@@ -19,28 +19,24 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 /**
- * An {@code Option} is a parameter that is interpreted key-based.
+ * Options are key-based interpreted parameters.
  *
- * <p>All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z]([A-Za-z0-9]|-)*`). These
- * keys are also referred to as "long tokens" throughout this document.</p>
+ * <p>All options are uniquely identifiable by a case-sensitive key. These keys are also referred to as <i>long
+ * tokens</i> throughout this document. The key must match the pattern: {@code [A-Za-z]([A-Za-z0-9]|-|\.)*}</p>
  *
  * <p>Additionally it is possible to use a single alphabetic character as alternate case-sensitive key. These keys are
- * also referred as "short tokens" throughout this document.</p>
+ * also referred as <i>short tokens</i> throughout this document.</p>
  *
- * <p>An option is "present" iff it has been discovered by the parser.</p>
+ * <p>By default, a option are known to the parser ahead of time and require a value to be specified. Options that use
+ * this default behavior are also referred to as <i>regular options</i> when necessary.</p>
  *
+ * <h3>Marker options</h3>
+ * <p>Options may be denoted as <i>marker options</i>.</p>
+ * <ul><li>A marker option allows for (but does not require) a value to be specified.</li></ul>
  *
- * <p><b>Marker Options</b><br>
- * Options may be denoted as "marker options" with an associated marker value. A marker option is treated as a regular
- * option with the following exceptions:</p>
- * <ul><li>A marker option may be explicitly present without a specified value.</li></ul>
- *
- * <p>Additionally marker options may be denoted to be usable only as markers (or "marker-only options"). A marker-only
- * option is treated as a regular option with the following exceptions:</p>
- * <ul>
- * <li>A marker-only option must either be explicitly present without a specified value or not be present at all.</li>
- * </ul>
- *
+ * <h3>Marker-only options</h3>
+ * <p>Options may be denoted as <i>marker-only options</i>.</p>
+ * <ul><li>A Marker-only option does not allow for a value to be specified.</li></ul>
  *
  * @param <T> the type of the options value
  *

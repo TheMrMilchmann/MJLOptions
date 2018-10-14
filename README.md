@@ -30,98 +30,104 @@ command.
 
 ## Specification
 
-1. **Arguments**<br>
-    Arguments are index-based interpreted parameters.
+1. **Definition**<br>
 
-    An argument is "present" iff it has been discovered by the parser.
+    1. **Arguments**<br>
+        Arguments are index-based interpreted parameters.
 
-    1. **Optional Arguments**<br>
-        Arguments may be denoted as "optional arguments" (optionally) with an associated default value. An optional
-        argument is treated as a regular argument with the following exception:
-        - An optional argument may not be present. (In this case if the argument has a default value, it is assigned as
-        value for the argument.)
-                
-        Any argument with an index greater than an optional argument must also be optional.
-    
-    1. **Vararg Argument**<br>
-        The trailing argument may be denoted as "vararg argument".<br>
-        An indefinite amount of values may be assigned to a vararg argument. Vararg arguments may additionally be
-        optional. If a vararg argument is not optional, at least one value must be explicitly assigned.
+        1. **Optional arguments**<br>
+            Arguments may be denoted as _optional arguments_.
 
-1. **Options**<br>
-    Options are key-based interpreted parameters.<br>
-    All options are uniquely identifiable by a case-sensitive alphanumeric key (`[A-Za-z]([A-Za-z0-9]|-|\.)*`). These keys
-    are also referred to as "long tokens" throughout this document.<br>
-    Additionally it is possible to use a single alphabetic character as alternate case-sensitive key. These keys are
-    also referred as "short tokens" throughout this document.
-    
-    An option is "present" iff it has been discovered by the parser.
+            - Optional arguments do not require a value to be specified.
+            - All arguments required after an optional argument must also be optional.
 
-    1. **Marker Options**<br>
-        Options may be denoted as "marker options" with an associated marker value. A marker option is treated as a
-        regular option with the following exceptions:
-        - A marker option may be explicitly present without a specified value.
+        1. **Vararg arguments**<br>
+            The trailing argument may be denoted as _vararg argument_.
 
-        Additionally marker options may be denoted to be usable only as markers (or "marker-only options"). A
-        marker-only option is treated as a regular option with the following exceptions:
-        - A marker-only option must either be explicitly present without a specified value or not be present at all.
-    
-1. **Parsing Rules**<br>
+            - An indefinite amount of values may be assigned to a vararg argument.
+            - Vararg arguments may additionally be optional. (If a vararg argument is not optional, at least one value
+                must be explicitly assigned.)
 
-    1. **Interpreting Parameters**<br>
-        A parameter is treated differently based on the preceding delimiter. Parameters are interpreted as:
-        - **Option (by long token)** if the parameter is prefixed with a double-hyphen delimiter (`--`) and followed by
-        any non-whitespace character,
-        - **Parser escape symbol** if the parameter is equal to a double-hyphen delimiter (`--`),
-        - **Option (by short token)** if the parameter is prefixed with a single-hyphen delimiter (`-`) and followed by
-        an alphabetic character, or
-        - **Argument** (or value depending on context) otherwise.
+    1. **Options**<br>
+        Options are key-based interpreted parameters.
 
-    1. **Parsing Options (by long token)**<br>
-        A parameter prefixed with a double-hyphen delimiter (`--`) is interpreted as an option.
-        All characters following the delimiter until either any whitespace character or an equals character (`=`) are
+        All options are uniquely identifiable by a case-sensitive key. These keys are also referred to as _long tokens_
+        throughout this document. The key must match the pattern: `[A-Za-z]([A-Za-z0-9]|-|\.)*`
+
+        Additionally it is possible to use a single alphabetic character as alternate case-sensitive key. These keys are
+        also referred as _short tokens_ throughout this document.
+
+        By default, a option are known to the parser ahead of time and require a value to be specified. Options that use
+        this default behavior are also referred to as _regular options_ when necessary.
+
+        1. **Marker options**<br>
+            Options may be denoted as _marker options_.
+
+            - A marker option allows for (but does not require) a value to be specified.
+
+        1. **Marker-only options**<br>
+            Options may be denoted as _marker-only options_.
+
+            - A Marker-only option does not allow for a value to be specified.
+
+        1. **Wildcard options**<br>
+            Values may be specified for options that are not known ahead of time. These options are referred to as
+            _wildcard options_.
+
+            For the purpose of parsing, wildcard options are treated like marker options.
+
+1. **Parsing**<br>
+    Libraries implementing this specification must provide at least two different ways to parse user input: parsing
+    coherent character sequences (e.g. Strings) which are referred to as _lines_ and parsing pre-split collections of
+    character sequences (e.g. Arrays of Strings) which are referred to as _fragments_.
+
+    1. **Converting lines to fragments**<br>
+        TODO...
+
+    1. **Interpreting Fragments**<br>
+        Fragments are handled differently depending on the current state of the parser and their initial characters.
+        A fragment is interpreted as...
+
+        1. **option escape sequence** if the fragment is `--` (if this cases is matched for the first time, option
+            parsing is terminated, otherwise an error is thrown).
+        1. **argument** if option parsing has been terminated.
+        1. **option** (identified by a long token) if the fragment is prefixed by a double-hyphen delimiter (`--`).
+        1. **wildcard option** if the fragment is prefixed by a hyphen-route delimiter (`-#`).
+        1. **option/s** (identified by short token/s) if the fragment is prefixed by a single-hyphen delimiter which is
+            not followed by a digit.
+        1. **argument**.
+
+    1. **Parsing options identified by long tokens**<br>
+        All characters following the initial double-hyphen delimiter until either an equals sign (`=`) or the end of the
+        fragment are interpreted as long token for the option.
+
+        If the long token is suffixed by an equals sign, all characters following that equals sign until the end of the
+        fragment are interpreted as value for the option. If the option requires a value to be specified, or the option
+        allows for a value to be specified and the next fragment would be interpreted as an argument, the next fragment
+        is interpreted as value for the option. Otherwise, the next fragment is interpreted regularly.
+        
+    1. **Parsing wildcard options**<br>
+        All characters following the `-$` delimiter until either an equals sign (`=`) or the end of the fragment are
         interpreted as long token for the option.
-    
-        Parsing is continued as specified in _Parsing Option Values_.
-    
-    1. **Parsing Options (by short token)**<br>
-        A parameter prefixed with a single-hyphen delimiter (`-`) is interpreted as an option or a bunch of options.
-        All characters following the delimiter until either any whitespace character or an equals character (`=`) are
+
+        If the wildcard token is suffixed by an equals sign, all characters following that equals sign until the end of
+        the fragment are interpreted as value for the option. If the next fragment would be interpreted as an argument,
+        it is interpreted as value for the option. Otherwise, the next fragment is interpreted regularly.
+
+    1. **Parsing options identified by short tokens**<br>
+        All characters following the initial hyphen delimiter until either an equals sign or the end of the fragment are
         interpreted as short tokens for the options.
-        
-        This definition allows multiple short tokens to be chained behind a single-hyphen delimiter. Thus, `-a -b -c`
-        and `-abc` are equivalent. (Furthermore, `-a <value> -b <value> -c <value>` and `-abc <value>` are equivalent.)
 
-        If all chained options have the same type, parsing is continued as specified in _Parsing Option Values_,
-        otherwise the following rules apply:
-        - When regular options and marker-only options are chained parsing fails.
-        - When marker options and regular options are chained parsing continues as specified for regular options.
-        - When marker options and marker-only options are chained parsing continues as specified for marker-only
-        options.
-        
-    1. **Parsing Options Dynamically**<br>
-        A parameter prefixed with a hyphen-dollar delimiter (`-$`) is interpreted as a dynamic option.
-        All characters following the delimiter until either any whitespace character or an equals character (`=`) are
-        interpreted as token for the option.
-        
-        Iff the token is followed immediately by an equals character the characters following this character are
-        interpreted as value and parsed as specified in _Parsing Option Values_.
+        This definition allows for multiple options to be bundled together.  Thus, `-a -b -c` and `-abc` are equivalent.
+        (Furthermore, `-a <value> -b <value> -c <value>` and `-abc <value>` are equivalent.)
 
-    1. **Parsing Option Values**<br>
-        Parsing branches depending on the type of the option.
-        - Regular option: The next parameter is parsed and interpreted as value for the option. (If no next parameter
-        exists or the parameter is not a value, parsing fails.)
-        - Marker option: If a next parameter exists and it is a value it is interpreted as value for the option.
-        (Otherwise the marker value is assigned as value for the option and the next parameter is interpreted
-        regularly.)        
-        - Marker-only option: The next parameter is interpreted regularly.
-        
-    1. **Parsing Arguments and values**<br>
-        TODO
-    
-    1. **Escaping Option Parsing**<br>
-        All parameters following a parser escape symbol, a parameter consisting of just a double-hyphen delimiter
-        (`--`), are interpreted as arguments.
+        If the short tokens are suffixed by an equals sign, all characters following that equals sign until the end of
+        the fragment are interpreted as value for the options. If any option require a value to be specified, the next
+        fragment is interpreted as value for the options. If any option does not allow for a value to be specified, the
+        next fragment is interpreted regularly.
+
+    1. **Parsing arguments**<br>
+        The fragment is interpreted as value for the current argument.
 
 
 ## Grammar
@@ -131,7 +137,7 @@ This section informally explains the grammar notation used below.
 
 #### Symbols and naming
 - Terminal symbol names start with an uppercase letter, e.g. `String`.
-- Nonterminal symbol names start with lowercase letter, e.g. `command`.
+- Nonterminal symbol names start with lowercase letter, e.g. `line`.
 - Each production starts with a colon (:).
 - Symbol definitions may have many productions and are terminated by a semicolon (;).
 - Symbol definitions may be prepended with attributes, e.g. start attribute denotes a start symbol.
@@ -146,7 +152,7 @@ This section informally explains the grammar notation used below.
 
 ```
 start
-command
+line
     : parameter* ("--" String*)?
     ;
 
@@ -180,15 +186,15 @@ markerOption
     ;
 
 dynamicOption
-    : "-$" LongOptionToken ("=" String)?
+    : "-#" LongOptionToken ("=" String)?
     ;
 
 ShortOptionToken
-    : <any alphabetic character>
+    : <any valid character for short tokens>
     ;
     
 LongOptionToken
-    : <any alphanumeric character>+
+    : <any valid character for long tokens>+
     ;
 
 String

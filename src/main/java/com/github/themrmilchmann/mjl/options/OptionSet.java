@@ -70,7 +70,7 @@ public final class OptionSet {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"unchecked", "Duplicates"})
+    @SuppressWarnings({"unchecked"})
     @Nullable
     public <T> T get(Argument<T> arg) {
         if (!this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
@@ -107,7 +107,7 @@ public final class OptionSet {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"unchecked", "Duplicates"})
+    @SuppressWarnings({"unchecked"})
     @Nullable
     public <T> T get(Option<T> opt) {
         if (!this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();
@@ -144,7 +144,7 @@ public final class OptionSet {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"unchecked", "Duplicates"})
+    @SuppressWarnings({"unchecked"})
     @Nullable
     public <T> T getOrElse(Argument<T> arg, @Nullable T other) {
         if (this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
@@ -182,7 +182,7 @@ public final class OptionSet {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"unchecked", "Duplicates"})
+    @SuppressWarnings({"unchecked"})
     @Nullable
     public <T> T getOrElse(Option<T> opt, @Nullable T other) {
         if (this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();

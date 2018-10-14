@@ -19,24 +19,22 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 /**
- * An {@code Argument} is a parameter that is interpreted index-based.
+ * Arguments are index-based interpreted parameters.
  *
- * <p>An argument is "present" iff it has been discovered by the parser.</p>
- *
- * <p><b>Optional Arguments</b><br>
- * Arguments may be denoted as "optional arguments" (optionally) with an associated default value. An optional argument
- * is treated as a regular argument with the following exception:</p>
+ * <h3>Optional arguments</h3>
+ * <p>Arguments may be denoted as <i>optional arguments</i>.</p>
  * <ul>
- * <li>An optional argument may not be present. (In this case if the argument has a default value, it is assigned as
- * value for the argument.)</li>
+ *     <li>Optional arguments do not require a value to be specified.</li>
+ *     <li>All arguments required after an optional argument must also be optional.</li>
  * </ul>
  *
- * <p>Any argument with an index greater than an optional argument must also be optional.</p>
- *
- * <p><b>Vararg Argument</b><br>
- * The trailing argument may be denoted as "vararg argument".<br>
- * An indefinite amount of values may be assigned to a vararg argument. Vararg arguments may additionally be optional.
- * If a vararg argument is not optional, at least one value must be explicitly assigned.</p>
+ * <h3>Vararg arguments</h3>
+ * <p>The trailing argument may be denoted as <i>vararg argument</i>.</p>
+ * <ul>
+ *     <li>An indefinite amount of values may be assigned to a vararg argument.</li>
+ *     <li>Vararg arguments may additionally be optional. (If a vararg argument is not optional, at least one value must
+ *     be explicitly assigned.)</li>
+ * </ul>
  *
  * @param <T>   the type of the arguments value
  *

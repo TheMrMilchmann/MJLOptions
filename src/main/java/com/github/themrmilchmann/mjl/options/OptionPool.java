@@ -65,7 +65,6 @@ public final class OptionPool {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "WeakerAccess"})
     public boolean contains(Argument<?> arg) {
         Objects.requireNonNull(arg);
 
@@ -89,7 +88,6 @@ public final class OptionPool {
      *
      * @since   0.1.0
      */
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "WeakerAccess"})
     public boolean contains(Option<?> option) {
         Objects.requireNonNull(option);
         return this.optLongTokens.containsValue(option);
@@ -257,22 +255,6 @@ public final class OptionPool {
         }
 
         /**
-         * Adds an optional argument for the option pool.
-         *
-         * @param arg   the argument to add to this pool
-         *
-         * @return  this builder instance
-         *
-         * @since   0.1.0
-         */
-        public Builder withOptionalArg(Argument arg) {
-            if (this.isLastVararg) throw new IllegalStateException();
-
-            this.args.add(arg);
-            return this;
-        }
-
-        /**
          * Adds a vararg argument for the option pool.
          *
          * @param arg   the argument to add to this pool
@@ -283,22 +265,6 @@ public final class OptionPool {
          */
         public Builder withVarargArg(Argument<?> arg) {
             this.withArg(arg);
-            this.isLastVararg = true;
-
-            return this;
-        }
-
-        /**
-         * Adds an optional vararg argument for the option pool.
-         *
-         * @param arg   the argument to add to this pool
-         *
-         * @return  this builder instance
-         *
-         * @since   0.1.0
-         */
-        public Builder withOptionalVarargArg(Argument<?> arg) {
-            this.withOptionalArg(arg);
             this.isLastVararg = true;
 
             return this;

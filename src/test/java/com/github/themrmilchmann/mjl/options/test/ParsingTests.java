@@ -298,21 +298,21 @@ public final class ParsingTests {
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
     public void sec34ParseDynamicOption_MarkerUse(ParseFun parseFun) {
-        OptionSet set = parseFun.parse(optPool, "-$dynamic");
+        OptionSet set = parseFun.parse(optPool, "-#dynamic");
         assertTrue(set.getDynamicOptions().containsKey("dynamic"));
         assertNull(set.getDynamicOptions().get("dynamic"));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
     public void sec34ParseDynamicOption_EqualsValue(ParseFun parseFun, String value) {
-        OptionSet set = parseFun.parse(optPool, "-$dynamic=" + value);
+        OptionSet set = parseFun.parse(optPool, "-#dynamic=" + value);
         assertTrue(set.getDynamicOptions().containsKey("dynamic"));
         assertEquals(set.getDynamicOptions().get("dynamic"), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
     public void sec34ParseDynamicOption_WhitespaceValue(ParseFun parseFun, String value) {
-        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-$dynamic", value));
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-#dynamic", value));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
@@ -335,12 +335,12 @@ public final class ParsingTests {
 
             @Override
             public OptionSet parse(OptionPool pool, String... s) {
-                return OptionParser.parse(pool, s);
+                return OptionParser.parseFragments(pool, s);
             }
 
             @Override
             public String toString() {
-                return "parse";
+                return "parseFragments";
             }
 
         }

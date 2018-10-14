@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * A minmal Java library providing a convenient way to parse command line parameters.
+ * A minmal Java library which provides a convenient way to parse command line parameters (for Java 8 and later).
  *
  * <p>MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
  * predictable format.</p>

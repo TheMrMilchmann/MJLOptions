@@ -15,6 +15,7 @@
  */
 package com.github.themrmilchmann.mjl.options.test;
 
+import java.util.StringJoiner;
 import com.github.themrmilchmann.mjl.options.Argument;
 import com.github.themrmilchmann.mjl.options.Option;
 import com.github.themrmilchmann.mjl.options.OptionParser;
@@ -56,265 +57,320 @@ public final class ParsingTests {
             .build();
     }
 
+    @DataProvider(name = "value0")
+    private static Object[][] dataValue0() {
+        return new Object[][] { { ParseFun.PARSE }, { ParseFun.PARSE_LINE } };
+    }
+
     @DataProvider(name = "value1")
     private static Object[][] dataValue1() {
-        return new String[][] { { "value" }, { "longer value" }, { ""  /* empty value */ } };
+        return new Object[][] {
+            { ParseFun.PARSE, "value" },
+            { ParseFun.PARSE_LINE, "value" },
+            { ParseFun.PARSE, "longer value" },
+            { ParseFun.PARSE_LINE, "longer value" },
+            { ParseFun.PARSE, ""  /* empty value */ },
+            { ParseFun.PARSE_LINE, ""  /* empty value */ }
+        };
     }
 
-    private static String stripQuotes(String value) {
-        if (value.startsWith("\"")) value = value.substring(1);
-        if (value.endsWith("\"")) value = value.substring(0, value.length() - 1);
-
-        return value;
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec32ParseRegular_MarkerUse() {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "--regular"));
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseRegular_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "--regular=" + value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec32ParseRegular_MarkerUse(ParseFun parseFun) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "--regular"));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseRegular_WhitespaceValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "--regular", value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
+    public void sec32ParseRegular_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "--regular=" + value);
+        assertEquals(set.get(optRegular), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec32ParseMarker_MarkerUse() {
-        OptionSet set = OptionParser.parse(optPool, "--marker");
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec32ParseRegular_WhitespaceValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "--regular", value);
+        assertEquals(set.get(optRegular), value);
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec32ParseMarker_MarkerUse(ParseFun parseFun) {
+        OptionSet set = parseFun.parse(optPool, "--marker");
         assertEquals(set.get(optMarker), "markerValue");
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseMarker_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "--marker=" + value);
-        assertEquals(set.get(optMarker), stripQuotes(value));
+    public void sec32ParseMarker_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "--marker=" + value);
+        assertEquals(set.get(optMarker), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseMarker_WhitespaceValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "--marker", value);
-        assertEquals(set.get(optMarker), stripQuotes(value));
+    public void sec32ParseMarker_WhitespaceValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "--marker", value);
+        assertEquals(set.get(optMarker), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec32ParseMarkerOnly_MarkerUse() {
-        OptionSet set = OptionParser.parse(optPool, "--markerOnly");
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec32ParseMarkerOnly_MarkerUse(ParseFun parseFun) {
+        OptionSet set = parseFun.parse(optPool, "--markerOnly");
         assertEquals(set.get(optMarkerOnly), "markerValue");
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseMarkerOnly_EqualsValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "--markerOnly=" + value }));
+    public void sec32ParseMarkerOnly_EqualsValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "--markerOnly=" + value }));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec32ParseMarkerOnly_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "--markerOnly", value }));
+    public void sec32ParseMarkerOnly_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "--markerOnly", value }));
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseRegular_MarkerUse() {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-r" }));
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegular_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-r=" + value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseRegular_MarkerUse(ParseFun parseFun) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-r" }));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegular_WhitespaceValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-r", value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
+    public void sec33ParseRegular_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-r=" + value);
+        assertEquals(set.get(optRegular), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarker_MarkerUse() {
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec33ParseRegular_WhitespaceValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-r", value);
+        assertEquals(set.get(optRegular), value);
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarker_MarkerUse(ParseFun parseFun) {
         String[] command = { "-m" };
-        OptionSet set = OptionParser.parse(optPool, command);
+        OptionSet set = parseFun.parse(optPool, command);
         assertEquals(set.get(optMarker), "markerValue");
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarker_EqualsValue(String value) {
+    public void sec33ParseMarker_EqualsValue(ParseFun parseFun, String value) {
         String[] command = { "-m=" + value };
-        OptionSet set = OptionParser.parse(optPool, command);
-        assertEquals(set.get(optMarker), stripQuotes(value));
+        OptionSet set = parseFun.parse(optPool, command);
+        assertEquals(set.get(optMarker), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarker_WhitespaceValue(String value) {
+    public void sec33ParseMarker_WhitespaceValue(ParseFun parseFun, String value) {
         String[] command = { "-m", value };
-        OptionSet set = OptionParser.parse(optPool, command);
-        assertEquals(set.get(optMarker), stripQuotes(value));
+        OptionSet set = parseFun.parse(optPool, command);
+        assertEquals(set.get(optMarker), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarkerOnly_MarkerUse() {
-        OptionSet set = OptionParser.parse(optPool, "-o");
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarkerOnly_MarkerUse(ParseFun parseFun) {
+        OptionSet set = parseFun.parse(optPool, "-o");
         assertEquals(set.get(optMarkerOnly), "markerValue");
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerOnly_EqualsValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-o=" + value }));
+    public void sec33ParseMarkerOnly_EqualsValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-o=" + value }));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerOnly_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-o", value }));
+    public void sec33ParseMarkerOnly_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-o", value }));
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseRegularChain_MarkerUse() {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-rs" }));
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegularChain_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-rs=" + value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
-        assertEquals(set.get(optRegularAlt), stripQuotes(value));
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseRegularChain_MarkerUse(ParseFun parseFun) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-rs" }));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegularChain_WhitespaceValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-rs", value);
-        assertEquals(set.get(optRegular), stripQuotes(value));
-        assertEquals(set.get(optRegularAlt), stripQuotes(value));
+    public void sec33ParseRegularChain_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-rs=" + value);
+        assertEquals(set.get(optRegular), value);
+        assertEquals(set.get(optRegularAlt), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarkerChain_MarkerUse() {
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec33ParseRegularChain_WhitespaceValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-rs", value);
+        assertEquals(set.get(optRegular), value);
+        assertEquals(set.get(optRegularAlt), value);
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarkerChain_MarkerUse(ParseFun parseFun) {
         String[] command = { "-mn" };
-        OptionSet set = OptionParser.parse(optPool, command);
+        OptionSet set = parseFun.parse(optPool, command);
         assertEquals(set.get(optMarker), optMarker.getMarkerValue());
         assertEquals(set.get(optMarkerAlt), optMarkerAlt.getMarkerValue());
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerChain_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-mn=" + value);
-        assertEquals(set.get(optMarker), stripQuotes(value));
-        assertEquals(set.get(optMarkerAlt), stripQuotes(value));
+    public void sec33ParseMarkerChain_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-mn=" + value);
+        assertEquals(set.get(optMarker), value);
+        assertEquals(set.get(optMarkerAlt), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerChain_WhitespaceValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-mn", value);
-        assertEquals(set.get(optMarker), stripQuotes(value));
-        assertEquals(set.get(optMarkerAlt), stripQuotes(value));
+    public void sec33ParseMarkerChain_WhitespaceValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-mn", value);
+        assertEquals(set.get(optMarker), value);
+        assertEquals(set.get(optMarkerAlt), value);
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarkerOnlyChain_MarkerUse() {
-        OptionSet set = OptionParser.parse(optPool, "-op");
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarkerOnlyChain_MarkerUse(ParseFun parseFun) {
+        OptionSet set = parseFun.parse(optPool, "-op");
         assertEquals(set.get(optMarkerOnly), "markerValue");
         assertEquals(set.get(optMarkerOnlyAlt), "markerValueAlt");
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerOnlyChain_EqualsValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-op=" + value));
+    public void sec33ParseMarkerOnlyChain_EqualsValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-op=" + value));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerOnlyChain_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-op", value));
+    public void sec33ParseMarkerOnlyChain_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-op", value));
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseRegularAndMarkerOnlyChain_MarkerUse() {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-ro"));
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegularAndMarkerOnlyChain_EqualsValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-ro=" + value }));
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseRegularAndMarkerOnlyChain_MarkerUse(ParseFun parseFun) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-ro"));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseRegularAndMarkerOnlyChain_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-ro", value }));
-    }
-
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarkerAndRegularChain_MarkerUse() {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, new String[] { "-mr" }));
+    public void sec33ParseRegularAndMarkerOnlyChain_EqualsValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-ro=" + value }));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerAndRegularChain_EqualsValue(String value) {
+    public void sec33ParseRegularAndMarkerOnlyChain_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-ro", value }));
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarkerAndRegularChain_MarkerUse(ParseFun parseFun) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, new String[] { "-mr" }));
+    }
+
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
+    public void sec33ParseMarkerAndRegularChain_EqualsValue(ParseFun parseFun, String value) {
         String[] command = new String[] { "-mr=" + value };
         String[] refCommand = { "-r=" + value };
-        OptionSet set = OptionParser.parse(optPool, command);
-        OptionSet refSet = OptionParser.parse(optPool, refCommand);
+        OptionSet set = parseFun.parse(optPool, command);
+        OptionSet refSet = parseFun.parse(optPool, refCommand);
         assertEquals(set.get(optRegular), set.get(optMarker));
         assertEquals(set.get(optRegular), refSet.get(optRegular));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerAndRegularChain_WhitespaceValue(String value) {
+    public void sec33ParseMarkerAndRegularChain_WhitespaceValue(ParseFun parseFun, String value) {
         String[] command = new String[] { "-mr", value };
         String[] refCommand = new String[] { "-r", value };
-        OptionSet set = OptionParser.parse(optPool, command);
-        OptionSet refSet = OptionParser.parse(optPool, refCommand);
+        OptionSet set = parseFun.parse(optPool, command);
+        OptionSet refSet = parseFun.parse(optPool, refCommand);
         assertEquals(set.get(optRegular), set.get(optMarker));
         assertEquals(set.get(optRegular), refSet.get(optRegular));
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec33ParseMarkerAndMarkerOnlyChain_MarkerUse() {
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec33ParseMarkerAndMarkerOnlyChain_MarkerUse(ParseFun parseFun) {
         String[] command = { "-mo" };
         String[] refCommand = { "-o" };
-        OptionSet set = OptionParser.parse(optPool, command);
-        OptionSet refSet = OptionParser.parse(optPool, refCommand);
+        OptionSet set = parseFun.parse(optPool, command);
+        OptionSet refSet = parseFun.parse(optPool, refCommand);
         assertEquals(set.get(optMarkerOnly), refSet.get(optMarkerOnly));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerAndMarkerOnlyChain_EqualsValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-mo=" + value));
+    public void sec33ParseMarkerAndMarkerOnlyChain_EqualsValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-mo=" + value));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec33ParseMarkerAndMarkerOnlyChain_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-mo", value));
+    public void sec33ParseMarkerAndMarkerOnlyChain_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-mo", value));
     }
 
-    @Test(groups = TEST_GROUPS_PARSING)
-    public void sec34ParseDynamicOption_MarkerUse() {
-        OptionSet set = OptionParser.parse(optPool, "-$dynamic");
+    @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value0")
+    public void sec34ParseDynamicOption_MarkerUse(ParseFun parseFun) {
+        OptionSet set = parseFun.parse(optPool, "-$dynamic");
         assertTrue(set.getDynamicOptions().containsKey("dynamic"));
         assertNull(set.getDynamicOptions().get("dynamic"));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec34ParseDynamicOption_EqualsValue(String value) {
-        OptionSet set = OptionParser.parse(optPool, "-$dynamic=" + value);
+    public void sec34ParseDynamicOption_EqualsValue(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(optPool, "-$dynamic=" + value);
         assertTrue(set.getDynamicOptions().containsKey("dynamic"));
-        assertEquals(set.getDynamicOptions().get("dynamic"), stripQuotes(value));
+        assertEquals(set.getDynamicOptions().get("dynamic"), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec34ParseDynamicOption_WhitespaceValue(String value) {
-        expectThrows(ParsingException.class, () -> OptionParser.parse(optPool, "-$dynamic", value));
+    public void sec34ParseDynamicOption_WhitespaceValue(ParseFun parseFun, String value) {
+        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-$dynamic", value));
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
-    public void sec36ParseArgument(String value) {
-        OptionSet set = OptionParser.parse(argPool, value);
+    public void sec36ParseArgument(ParseFun parseFun, String value) {
+        OptionSet set = parseFun.parse(argPool, parseFun == ParseFun.PARSE_LINE ? "\"" + value + "\"" : value);
 
         assertTrue(set.isSet(arg0));
-        assertEquals(set.get(arg0), stripQuotes(value));
+        assertEquals(set.get(arg0), value);
+    }
+
+    @FunctionalInterface
+    private interface ParseFun {
+
+        ParseFun PARSE = new Impl$Parse();
+        ParseFun PARSE_LINE = new Impl$ParseLine();
+
+        OptionSet parse(OptionPool pool, String... s);
+
+        class Impl$Parse implements ParseFun {
+
+            @Override
+            public OptionSet parse(OptionPool pool, String... s) {
+                return OptionParser.parse(pool, s);
+            }
+
+            @Override
+            public String toString() {
+                return "parse";
+            }
+
+        }
+
+        class Impl$ParseLine implements ParseFun {
+
+            @Override
+            public OptionSet parse(OptionPool pool, String... s) {
+                if (s.length > 1) {
+                    StringJoiner wrapped = new StringJoiner(" ");
+                    for (int i = 1; i < s.length; i++) wrapped.add("\"" + s[i] + "\"");
+
+                    return OptionParser.parseLine(pool, s[0] + " " + wrapped);
+                } else {
+                    if (s[0].contains("=") && !s[0].endsWith("=")) {
+                        String[] split = s[0].split("=");
+                        s[0] = split[0] + "=\"" + split[1] + "\"";
+                    }
+
+                    return OptionParser.parseLine(pool, s[0]);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "parseLine";
+            }
+
+        }
+
     }
 
 }

@@ -59,6 +59,108 @@ public final class OptionParser {
         return new OptionSet(pool, values, dynamics);
     }
 
+    /**
+     * TODO doc
+     *
+     * @param pool  the pool of available parameters
+     * @param line  the line to be parsed
+     *
+     * @return  an immutable set of parsed values
+     *
+     * @since   0.3.0
+     */
+    public static OptionSet parseLine(OptionPool pool, String line) {
+        return parse(pool, cmdToArgs(line));
+    }
+
+    // https://github.com/Project-Skara/jdk/blob/master/src/java.base/windows/native/libjli/cmdtoargs.c
+    private static String[] cmdToArgs(String line) {
+        List<String> argList = new ArrayList<>();
+        char[] cmd = line.toCharArray();
+
+        for (int i = 0; i < cmd.length; i++) {
+            StringBuilder argBuilder = new StringBuilder();
+            char prev = '\0';
+            int quotes = 0, slashes = 0;
+
+            if (Character.isWhitespace(cmd[i])) {
+                boolean inParam = false;
+
+                for (; i < cmd.length && !inParam; i++) {
+                    if (Character.isWhitespace(cmd[i])) continue;
+
+                    inParam = true;
+                }
+
+                if (!inParam) break;
+            }
+
+            param: for (; i < cmd.length; i++) {
+                switch (cmd[i]) {
+                    case '"': {
+                        if (prev == '\\') {
+                            for (int j = 1; j < slashes; j += 2) {
+                                argBuilder.append(prev);
+                            }
+
+                            if (slashes % 2 == 1) {
+                                argBuilder.append(cmd[i]);
+                            } else {
+                                quotes++;
+                            }
+                        } else if (prev == '"' && quotes % 2 == 0) {
+                            quotes++;
+                            argBuilder.append(cmd[i]);
+                        } else if (quotes == 0) {
+                            quotes++; // starting quote
+                        } else {
+                            quotes--; // matching quote
+                        }
+
+                        slashes = 0;
+                    } break;
+                    case '\\': {
+                        slashes++;
+                    } break;
+                    case ' ':
+                    case '\t': {
+                        if (prev == '\\') {
+                            for (int j = 0; j < slashes; j++) {
+                                argBuilder.append(prev);
+                            }
+                        }
+
+                        if (quotes % 2 == 1) {
+                            argBuilder.append(cmd[i]);
+                        } else {
+                            break param;
+                        }
+
+                        slashes = 0;
+                    } break;
+                    default: {
+                        if (prev == '\\') {
+                            for (int j = 0; j < slashes; j++) {
+                                argBuilder.append(prev);
+                            }
+
+                            argBuilder.append(cmd[i]);
+                        } else {
+                            argBuilder.append(cmd[i]);
+                            prev = cmd[i];
+                        }
+
+                        slashes = 0;
+                    }
+                }
+            }
+
+            argList.add(argBuilder.toString());
+        }
+
+        return argList.toArray(new String[0]);
+    }
+
     private final Map<Object, Object> values = new HashMap<>();
     private final Map<String, String> dynamics = new HashMap<>();
 

@@ -30,6 +30,7 @@ if [ "$TRAVIS_REPO_SLUG" == "$SLUG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] &
             git pull -q "https://github.com/$SLUG.git" gh-pages
             mkdir -p ./docs/${TRAVIS_TAG}
             cp -r ../build/docs/javadoc/* ./docs/${TRAVIS_TAG}
+            sed -i -e "s/<!--INSERT_RELEASE-->/<!--INSERT_RELEASE-->\n            <li><a href=\"./docs/${TRAVIS_TAG}/index.html\">${TRAVIS_TAG}<\/a><br><\/li>/g" index.html
             COMMIT_MSG="feat(ci): $TRAVIS_TAG release documentation"
         else
             ./gradlew javadoc --parallel -Psnapshot

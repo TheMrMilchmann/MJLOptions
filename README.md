@@ -10,7 +10,7 @@ later).
 MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
 predictable format.
 
-[JavaDoc for MJL Options.](https://themrmilchmann.github.io/docs/index.html)
+[JavaDoc for MJL Options.](https://themrmilchmann.github.io/MJLOptions/)
 
 
 ## Installing

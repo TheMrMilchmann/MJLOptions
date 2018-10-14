@@ -61,8 +61,8 @@ tasks {
             options.compilerArgs.add(compileJava.classpath.asPath)
         }
 
-        val jdk9Home = jdk9Props.map { System.getenv(it)?.let { File(it) } }
-            .filterNotNull()
+        val jdk9Home = jdk9Props.mapNotNull { System.getenv(it) }
+            .map { File(it) }
             .firstOrNull(File::exists) ?: throw Error("Could not find valid JDK9 home")
         options.forkOptions.javaHome = jdk9Home
         options.isFork = true

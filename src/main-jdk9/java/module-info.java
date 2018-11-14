@@ -23,7 +23,7 @@
  *
  * @since   0.1.0
  */
-module com.github.themrmilchmann.mjl.events {
+module com.github.themrmilchmann.mjl.options {
 
     requires static jsr305;
 

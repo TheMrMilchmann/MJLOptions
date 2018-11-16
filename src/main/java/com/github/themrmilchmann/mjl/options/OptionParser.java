@@ -76,13 +76,13 @@ public final class OptionParser {
     /**
      * Converts the given line to an array of fragments.
      *
-     * <p>Lines are converted to fragments using the following rules:
-     * <li>
-     * <ul>Parameters are delimited by whitespace characters.</ul>
-     * <ul>A string surrounded by quotation marks (") is interpreted as single parameter, regardless of any whitespace
-     * character contained within. (A quoted string may be embedded in an argument.)</ul>
-     * <ul>A quotation mark preceded by a backslash (\") is interpreted as literal quotation mark character.</ul>
-     * </li></p>
+     * <p>Lines are converted to fragments using the following rules:</p>
+     * <ul>
+     * <li>Parameters are delimited by whitespace characters.</li>
+     * <li>A string surrounded by quotation marks (") is interpreted as single parameter, regardless of any whitespace
+     * character contained within. (A quoted string may be embedded in an argument.)</li>
+     * <li>A quotation mark preceded by a backslash (\") is interpreted as literal quotation mark character.</li>
+     * </ul>
      *
      * @param line  the line to be converted
      *

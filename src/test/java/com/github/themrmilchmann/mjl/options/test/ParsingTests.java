@@ -312,7 +312,9 @@ public final class ParsingTests {
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")
     public void sec34ParseDynamicOption_WhitespaceValue(ParseFun parseFun, String value) {
-        expectThrows(ParsingException.class, () -> parseFun.parse(optPool, "-#dynamic", value));
+        String[] command = { "-#dynamic", value };
+        OptionSet set = parseFun.parse(optPool, command);
+        assertEquals(set.getDynamicOptions().get("dynamic"), value);
     }
 
     @Test(groups = TEST_GROUPS_PARSING, dataProvider = "value1")

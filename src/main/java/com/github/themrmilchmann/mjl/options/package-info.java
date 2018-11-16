@@ -13,6 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * MJL Options is a Java implementation of the <a href="https://github.com/TheMrMilchmann/sane-argv">sane-argv
+ * specification</a>
+ * for command line parameter parsing.
+ *
+ * @see com.github.themrmilchmann.mjl.options.OptionParser
+ */
 @NonNullApi
 package com.github.themrmilchmann.mjl.options;
 

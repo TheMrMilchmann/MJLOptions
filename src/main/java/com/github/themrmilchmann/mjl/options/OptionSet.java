@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * An {@code OptionSet} represents a collection of arguments and options associated with their parsed values.
@@ -163,6 +164,45 @@ public final class OptionSet {
     }
 
     /**
+     * Returns the value for the given {@link Argument argument}.
+     *
+     * <ol>
+     *     <li>Returns the explicitly set value for the given argument. (if available)</li>
+     *     <li>Returns the default value for the given argument. (if available)</li>
+     *     <li>Runs the given {@code factory} and returns its value</li>
+     * </ol>
+     *
+     * @param <T>       the type of the argument's value
+     * @param arg       the argument to retrieve the value for
+     * @param factory   the factory to compute otherwise
+     *
+     * @return  the value for the given argument
+     *
+     * @throws NullPointerException     if the given argument or factory is {@code null}
+     * @throws IllegalArgumentException if the given argument is <em>not</em> in the pool that this set was created from
+     *
+     * @since   0.3.0
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T> T getOrElse(Argument<T> arg, Supplier<T> factory) {
+        if (this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
+        Objects.requireNonNull(factory);
+
+        T res;
+
+        if (this.values.containsKey(arg)) {
+            res = (T) this.values.get(arg);
+        } else if (arg.hasDefaultValue()) {
+            res = arg.getDefaultValue();
+        } else {
+            res = factory.get();
+        }
+
+        return res;
+    }
+
+    /**
      * Returns the value for the given {@link Option option}.
      *
      * <ol>
@@ -195,6 +235,45 @@ public final class OptionSet {
             res = opt.getDefaultValue();
         } else {
             res = other;
+        }
+
+        return res;
+    }
+
+    /**
+     * Returns the value for the given {@link Option option}.
+     *
+     * <ol>
+     *     <li>Returns the explicitly set value for the given option. (if available)</li>
+     *     <li>Returns the default value for the given option. (if available)</li>
+     *     <li>Runs the given {@code factory} and returns its value</li>
+     * </ol>
+     *
+     * @param <T>       the type of the option's value
+     * @param opt       the option to retrieve the value for
+     * @param factory   the factory to compute otherwise
+     *
+     * @return  the value for the given argument
+     *
+     * @throws NullPointerException     if the given option or factory is {@code null}
+     * @throws IllegalArgumentException if the given option is <em>not</em> in the pool that this set was created from
+     *
+     * @since   0.3.0
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T> T getOrElse(Option<T> opt, Supplier<T> factory) {
+        if (this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();
+        Objects.requireNonNull(factory);
+
+        T res;
+
+        if (this.values.containsKey(opt)) {
+            res = (T) this.values.get(opt);
+        } else if (opt.hasDefaultValue()) {
+            res = opt.getDefaultValue();
+        } else {
+            res = factory.get();
         }
 
         return res;

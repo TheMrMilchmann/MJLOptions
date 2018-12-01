@@ -34,8 +34,6 @@ java {
 }
 
 tasks {
-    val compileJava: JavaCompile by getting
-
     val compileJava9 = create<JavaCompile>("compileJava9") {
         val jdk9Props = arrayOf(
             "JDK9_HOME",
@@ -58,7 +56,7 @@ tasks {
         afterEvaluate {
             // module-path hack
             options.compilerArgs.add("--module-path")
-            options.compilerArgs.add(compileJava.classpath.asPath)
+            options.compilerArgs.add(compileJava.get().classpath.asPath)
         }
 
         val jdk9Home = jdk9Props.mapNotNull { System.getenv(it) }
@@ -78,7 +76,7 @@ tasks {
         baseName = artifactName
 
         into("META-INF/versions/9") {
-            from(tasks["compileJava9"].outputs.files) {
+            from(compileJava9.outputs.files) {
                 include("module-info.class")
             }
         }

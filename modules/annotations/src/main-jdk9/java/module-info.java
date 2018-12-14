@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+/**
+ * Annotations used to declare an OptionPool in code.
+ *
+ * @since   0.4.0
+ */
+module com.github.themrmilchmann.mjl.options.annotations {
+
+    exports com.github.themrmilchmann.mjl.options.annotations;
+
 }

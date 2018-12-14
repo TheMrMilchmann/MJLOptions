@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
+package com.github.themrmilchmann.mjl.options.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Fields marked with this annotation are mapped hold wildcard options.
+ *
+ * @since   0.4.0
+ *
+ * @author  Leon Linhart
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface WildcardHolder {}

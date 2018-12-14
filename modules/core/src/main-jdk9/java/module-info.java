@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+/**
+ * A minmal Java library which provides a convenient way to parse command line parameters (for Java 8 and later).
+ *
+ * <p>MJL Options comes with a custom specification for command line parameters that is meant to provide a sane and
+ * predictable format.</p>
+ *
+ * @see com.github.themrmilchmann.mjl.options.OptionParser
+ *
+ * @since   0.1.0
+ */
+module com.github.themrmilchmann.mjl.options {
+
+    requires com.github.themrmilchmann.mjl.options.annotations;
+
+    requires static jsr305;
+
+    exports com.github.themrmilchmann.mjl.options;
+
 }

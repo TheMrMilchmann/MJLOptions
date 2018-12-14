@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-allprojects {
-    repositories {
-        mavenCentral()
+package com.github.themrmilchmann.mjl.options.internal;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
+
+public final class FieldAccess {
+
+    public static <T> T getStatic(Field field, MethodHandles.Lookup lookup) {
+        VarHandle varHandle = lookup.unreflectVarHandle(field);
+        return (T) varHandle.get(null);
     }
+
+    static void set(Field field, Object instance, Object value, MethodHandles.Lookup lookup) {
+        VarHandle varHandle = lookup.unreflectVarHandle​(field);
+        varHandle.set(instance, value);
+    }
+
 }

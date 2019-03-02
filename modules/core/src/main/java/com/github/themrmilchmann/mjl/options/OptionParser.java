@@ -108,8 +108,15 @@ public final class OptionParser {
         T instance;
 
         try {
-            MethodHandle hConstructor = lookup.findConstructor(cls, MethodType.methodType(cls));
-            instance = (T) hConstructor.invokeExact();
+            MethodHandle hConstructor;
+
+            try {
+                hConstructor = lookup.findConstructor(cls, MethodType.methodType(void.class));
+            } catch (Throwable t) {
+                hConstructor = lookup.in(cls).findConstructor(cls, MethodType.methodType(void.class));
+            }
+
+            instance = (T) hConstructor.invoke();
         } catch (Throwable t) {
             throw new ParsingException("Failed to instantiate data class", t);
         }

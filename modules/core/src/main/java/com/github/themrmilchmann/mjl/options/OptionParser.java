@@ -175,6 +175,8 @@ public final class OptionParser {
                         valueParser = ValueParser.FLOAT;
                     } else if (type == double.class) {
                         valueParser = ValueParser.DOUBLE;
+                    } else if (type == String.class) {
+                        valueParser = ValueParser.STRING;
                     } else {
                         throwAtField(field, errors, "Failed to infer ValueParser for field");
                         continue;

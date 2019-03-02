@@ -59,6 +59,8 @@ tasks {
             .firstOrNull(File::exists) ?: throw Error("Could not find valid JDK9 home")
         options.forkOptions.javaHome = jdk9Home
         options.isFork = true
+
+        options.encoding = "utf-8"
     }
 
     "test"(Test::class) {
@@ -71,9 +73,11 @@ tasks {
         baseName = artifactName
 
         into("META-INF/versions/9") {
-            from(compileJava9.outputs.files) {
-                include("module-info.class")
+            from(compileJava9.inputs.files.filter(File::isDirectory)) {
+                exclude("**/Stub.java")
             }
+
+            includeEmptyDirs = false
         }
 
         manifest {

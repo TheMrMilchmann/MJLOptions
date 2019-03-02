@@ -22,13 +22,21 @@ import java.lang.reflect.Field;
 public final class FieldAccess {
 
     public static <T> T getStatic(Field field, MethodHandles.Lookup lookup) {
-        VarHandle varHandle = lookup.unreflectVarHandle(field);
-        return (T) varHandle.get(null);
+        try {
+            VarHandle varHandle = lookup.unreflectVarHandle(field);
+            return (T) varHandle.get(null);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 
-    static void set(Field field, Object instance, Object value, MethodHandles.Lookup lookup) {
-        VarHandle varHandle = lookup.unreflectVarHandle​(field);
-        varHandle.set(instance, value);
+    public static void set(Field field, Object instance, Object value, MethodHandles.Lookup lookup) {
+        try {
+            VarHandle varHandle = lookup.unreflectVarHandle(field);
+            varHandle.set(instance, value);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 
 }

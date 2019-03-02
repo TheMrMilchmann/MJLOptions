@@ -31,4 +31,4 @@ fun File.discoverProjects(name: String = "") {
 }
 
 file("modules").discoverProjects()
-file("plugins").discoverProjects()
+//file("plugins").discoverProjects()

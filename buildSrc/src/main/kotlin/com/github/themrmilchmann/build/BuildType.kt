@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.github.themrmilchmann.build.*
+package com.github.themrmilchmann.build
 
-allprojects {
-    val nextVersion = "0.4.0"
-
-    group = "com.github.themrmilchmann.mjl"
-    version = when (deployment.type) {
-        com.github.themrmilchmann.build.BuildType.SNAPSHOT -> "$nextVersion-SNAPSHOT"
-        else -> nextVersion
-    }
-
-    repositories {
-        mavenCentral()
-    }
+enum class BuildType {
+    LOCAL,
+    SNAPSHOT,
+    RELEASE
 }

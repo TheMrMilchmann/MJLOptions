@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.github.themrmilchmann.mjl.build.*
+import com.github.themrmilchmann.build.*
 
 plugins {
     java
@@ -22,13 +22,6 @@ plugins {
 }
 
 val artifactName = "mjl-options-annotations"
-val nextVersion = "0.4.0"
-
-group = "com.github.themrmilchmann.mjl"
-version = when (deployment.type) {
-    com.github.themrmilchmann.mjl.build.BuildType.SNAPSHOT -> "$nextVersion-SNAPSHOT"
-    else -> nextVersion
-}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -169,11 +162,5 @@ signing {
 }
 
 val signMavenJavaPublication by tasks.getting {
-    onlyIf { deployment.type === com.github.themrmilchmann.mjl.build.BuildType.RELEASE }
-}
-
-dependencies {
-    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
-
-    testCompile("org.testng:testng:6.14.3")
+    onlyIf { deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE }
 }

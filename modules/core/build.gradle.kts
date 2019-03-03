@@ -37,13 +37,13 @@ tasks {
             "JDK_9"
         )
 
-        val ftSource = fileTree("src/main-jdk9/java")
+        val ftSource = fileTree("src/main/java-jdk9")
         ftSource.include("**/*.java")
-        options.sourcepath = files("src/main-jdk9/java")
+        options.sourcepath = files("src/main/java-jdk9")
         source = ftSource
 
         classpath = files()
-        destinationDir = File(buildDir, "classes/java-9/main")
+        destinationDir = File(buildDir, "classes/java-jdk9/main")
 
         sourceCompatibility = "9"
         targetCompatibility = "9"
@@ -70,11 +70,11 @@ tasks {
     "jar"(Jar::class) {
         dependsOn(compileJava9)
 
-        baseName = artifactName
+        archiveBaseName.set(artifactName)
 
         into("META-INF/versions/9") {
-            from(compileJava9.inputs.files.filter(File::isDirectory)) {
-                exclude("**/Stub.java")
+            from(compileJava9.outputs.files.filter(File::isDirectory)) {
+                exclude("**/Stub.class")
             }
 
             includeEmptyDirs = false
@@ -93,9 +93,17 @@ tasks {
     }
 
     create<Jar>("sourcesJar") {
-        baseName = artifactName
-        classifier = "sources"
+        archiveBaseName.set(artifactName)
+        archiveClassifier.set("sources")
         from(sourceSets["main"].allSource)
+
+        into("META-INF/versions/9") {
+            from(compileJava9.inputs.files.filter(File::isDirectory)) {
+                exclude("**/Stub.java")
+            }
+
+            includeEmptyDirs = false
+        }
     }
 
     val javadoc = "javadoc"(Javadoc::class)
@@ -103,8 +111,8 @@ tasks {
     create<Jar>("javadocJar") {
         dependsOn(javadoc)
 
-        baseName = artifactName
-        classifier = "javadoc"
+        archiveBaseName.set(artifactName)
+        archiveClassifier.set("javadoc")
         from(javadoc.get().outputs)
     }
 }
@@ -120,7 +128,7 @@ publishing {
             }
         }
     }
-    (publications) {
+    publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             artifact(tasks["sourcesJar"])

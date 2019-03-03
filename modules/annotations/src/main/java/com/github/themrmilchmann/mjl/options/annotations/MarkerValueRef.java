@@ -34,12 +34,12 @@ public @interface MarkerValueRef {
     /**
      * The reference string.
      *
-     * <p>Format:
+     * <p>Format:</p>
      * <ul>
      *     <li>Classes - "com.example.Class" (class must have a zero-arg constructor)</li>
      *     <li>Fields - "com.example.Class::field"</li>
      *     <li>Methods - "com.example.Class::method()"</li>
-     * </ul></p>
+     * </ul>
      *
      * @return  the reference string
      *

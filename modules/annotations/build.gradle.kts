@@ -61,10 +61,6 @@ tasks {
         options.isFork = true
     }
 
-    "test"(Test::class) {
-        useTestNG()
-    }
-
     "jar"(Jar::class) {
         dependsOn(compileJava9)
 

@@ -337,7 +337,7 @@ public final class ParsingTests {
 
             @Override
             public OptionSet parse(OptionPool pool, String... s) {
-                return OptionParser.parseFragments(pool, s);
+                return OptionParser.parse(pool, OptionParser.readFragments(s));
             }
 
             @Override
@@ -355,14 +355,14 @@ public final class ParsingTests {
                     StringJoiner wrapped = new StringJoiner(" ");
                     for (int i = 1; i < s.length; i++) wrapped.add("\"" + s[i] + "\"");
 
-                    return OptionParser.parseLine(pool, s[0] + " " + wrapped);
+                    return OptionParser.parse(pool, OptionParser.readLine(s[0] + " " + wrapped));
                 } else {
                     if (s[0].contains("=") && !s[0].endsWith("=")) {
                         String[] split = s[0].split("=");
                         s[0] = split[0] + "=\"" + split[1] + "\"";
                     }
 
-                    return OptionParser.parseLine(pool, s[0]);
+                    return OptionParser.parse(pool, OptionParser.readLine(s[0]));
                 }
             }
 

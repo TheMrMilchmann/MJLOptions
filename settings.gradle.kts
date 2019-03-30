@@ -15,6 +15,8 @@
  */
 rootProject.name = "MJL Options"
 
+enableFeaturePreview("GRADLE_METADATA")
+
 fun hasBuildscript(it: File) = File(it, "build.gradle.kts").exists()
 
 fun File.discoverProjects(name: String = "") {

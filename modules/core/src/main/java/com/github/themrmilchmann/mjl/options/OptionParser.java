@@ -54,45 +54,22 @@ public final class OptionParser {
     private static final Pattern PATTERN_OPTION = Pattern.compile(REGEX_OPTION);
 
     /**
-     * Converts the given fragments into an {@link Input} that can be parsed.
-     *
-     * @param fragments the fragments to be converted
-     *
-     * @return  the parsable input
-     *
-     * @since   0.4.0
-     */
-    public static Input readFragments(String... fragments) {
-        return new Input(fragments);
-    }
-
-    /**
-     * Converts the given line into an {@link Input} that can be parsed.
-     *
-     * @param line  the line to be converted
-     *
-     * @return  the parsable input
-     *
-     * @since   0.4.0
-     */
-    public static Input readLine(String line) {
-        return new Input(lineToFragments(line));
-    }
-
-    /**
      * Parses parameters into an immutable set from the given input.
      *
-     * @param pool  the pool of available parameters
-     * @param input the command to be parsed
+     * @param pool      the pool of available parameters
+     * @param fragments the input to be parsed
      *
      * @return  an immutable set of parsed values
      *
      * @throws ParsingException if any error occurs during parsing
      *
+     * @see #parseFragments(Class, MethodHandles.Lookup, String...)
+     * @see #parseLine(OptionPool, String)
+     *
      * @since   0.4.0
      */
-    public static OptionSet parse(OptionPool pool, Input input) {
-        OptionParser parser = new OptionParser(pool, input);
+    public static OptionSet parseFragments(OptionPool pool, String... fragments) {
+        OptionParser parser = new OptionParser(pool, fragments);
         parser.parse();
 
         Map<Object, Object> values = Collections.unmodifiableMap(parser.values);
@@ -107,17 +84,19 @@ public final class OptionParser {
      * @param <T>       the type of the data object
      * @param cls       the type of the data object
      * @param lookup    the lookup which will be used to construct the data object
-     * @param input     the command to be parsed
+     * @param fragments the input to be parsed
      *
      * @return  a data object holding parsed values
      *
      * @throws ClassPoolConfigurationException  if the data class is ill-formatted
      * @throws ParsingException                 if any error occurs during parsing
      *
+     * @see #parseFragments(OptionPool, String...)
+     * @see #parseLine(OptionPool, String)
+     *
      * @since   0.4.0
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T parse(Class<T> cls, MethodHandles.Lookup lookup, Input input) {
+    public static <T> T parseFragments(Class<T> cls, MethodHandles.Lookup lookup, String... fragments) {
         List<Throwable> errors = new ArrayList<>();
 
         TreeSet<ArgFieldWrapper> args = new TreeSet<>((alpha, beta) -> {
@@ -261,7 +240,7 @@ public final class OptionParser {
             args.add(varargFieldWrapper);
         }
 
-        OptionSet set = parse(bPool.build(), input);
+        OptionSet set = parseFragments(bPool.build(), fragments);
 
         for (ArgFieldWrapper wrapper : args) {
             if (set.isSet(wrapper.arg)) {
@@ -278,6 +257,47 @@ public final class OptionParser {
         }
 
         return instance;
+    }
+
+    /**
+     * Parses parameters into an immutable set from the given input.
+     *
+     * @param pool      the pool of available parameters
+     * @param line      the input to be parsed
+     *
+     * @return  an immutable set of parsed values
+     *
+     * @throws ParsingException if any error occurs during parsing
+     *
+     * @see #parseFragments(OptionPool, String...)
+     * @see #parseLine(Class, MethodHandles.Lookup, String)
+     *
+     * @since   0.4.0
+     */
+    public static OptionSet parseLine(OptionPool pool, String line) {
+        return parseFragments(pool, lineToFragments(line));
+    }
+
+    /**
+     * Constructs an {@link OptionPool} from the given class and parses parameters from the given input.
+     *
+     * @param <T>       the type of the data object
+     * @param cls       the type of the data object
+     * @param lookup    the lookup which will be used to construct the data object
+     * @param line      the input to be parsed
+     *
+     * @return  a data object holding parsed values
+     *
+     * @throws ClassPoolConfigurationException  if the data class is ill-formatted
+     * @throws ParsingException                 if any error occurs during parsing
+     *
+     * @see #parseFragments(OptionPool, String...)
+     * @see #parseLine(OptionPool, String)
+     *
+     * @since   0.4.0
+     */
+    public static <T> T parseLine(Class<T> cls, MethodHandles.Lookup lookup, String line) {
+        return parseFragments(cls, lookup, lineToFragments(line));
     }
 
     @Nullable
@@ -432,9 +452,9 @@ public final class OptionParser {
     private final OptionPool pool;
     private final String[] parameters;
 
-    private OptionParser(OptionPool pool, Input input) {
+    private OptionParser(OptionPool pool, String[] parameters) {
         this.pool = pool;
-        this.parameters = input.parameters;
+        this.parameters = parameters;
     }
 
     private void parse() {
@@ -605,25 +625,6 @@ public final class OptionParser {
         private OptFieldWrapper(Field field, Option<?> opt) {
             this.field = field;
             this.opt = opt;
-        }
-
-    }
-
-    /**
-     * Represents an input command that can be {@link OptionParser#parse(OptionPool, Input) parsed} into an
-     * {@code OptionPool}.
-     *
-     * @see OptionParser#readFragments(String...)
-     * @see OptionParser#readLine(String)
-     *
-     * @since   0.4.0
-     */
-    public static final class Input {
-
-        private final String[] parameters;
-
-        private Input(String[] parameters) {
-            this.parameters = parameters;
         }
 
     }

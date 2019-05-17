@@ -22,7 +22,7 @@ package com.github.themrmilchmann.mjl.options;
  *
  * @author  Leon Linhart
  */
-public final class ParsingException extends RuntimeException {
+public class ParsingException extends RuntimeException {
 
     /**
      * Creates a new {@code ParsingException}.

@@ -494,7 +494,7 @@ public final class OptionParser {
                 if (type == ParameterType.OPTION_BY_LONG_TOKEN) {
                     Option<?> opt = this.pool.getOption(tokens);
 
-                    if (opt == null) throw new ParsingException("Unknown long token '" + tokens + "'.");
+                    if (opt == null) throw new UnrecognizedOptionException(tokens);
                     if (this.values.containsKey(opt)) throw new ParsingException("Duplicate option " + opt + ".");
                     if (opt.isMarkerOnly() && rawValue != null) throw new ParsingException("Specified value for marker-only option in fragment '" + parameter + "'.");
 
@@ -521,7 +521,7 @@ public final class OptionParser {
 
                     for (char token : tokens.toCharArray()) {
                         Option<?> opt = this.pool.getOption(token);
-                        if (opt == null) throw new ParsingException("Unknown short token '" + token + "'.");
+                        if (opt == null) throw new UnrecognizedOptionException(tokens, token);
                         if (this.values.containsKey(opt) || opts.contains(opt)) throw new ParsingException("Duplicate option " + opt + ".");
                         if (opt.isMarkerOnly() && rawValue != null) throw new ParsingException("Specified value for marker-only option in fragment '" + parameter + "'.");
 

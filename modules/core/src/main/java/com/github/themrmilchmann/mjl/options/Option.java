@@ -67,6 +67,24 @@ public final class Option<T> {
         return new Builder<>(longToken, parser);
     }
 
+    /**
+     * Convenience shortcut for {@code Option.builder(...).build()}.
+     *
+     * @param <T>       the type of the options value
+     * @param longToken the long token for the option
+     * @param parser    the parser for the option
+     *
+     * @return  an option with the given properties
+     *
+     * @throws IllegalArgumentException if the long option token is invalid
+     * @throws NullPointerException     if {@code null} is passed to any of the parameters
+     *
+     * @since   0.4.0
+     */
+    public static <T> Option<T> build(String longToken, ValueParser<T> parser) {
+        return new Builder<>(longToken, parser).build();
+    }
+
     @Nullable
     private final Character shortToken;
     private final String longToken;

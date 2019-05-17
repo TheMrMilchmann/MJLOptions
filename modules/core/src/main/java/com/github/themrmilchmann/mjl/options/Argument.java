@@ -63,6 +63,22 @@ public final class Argument<T> {
         return new Builder<>(parser);
     }
 
+    /**
+     * Convenience shortcut for {@code Argument.builder(...).build()}.
+     *
+     * @param <T>       the type of the arguments value
+     * @param parser    the parser for the argument
+     *
+     * @return  an argument of the given type
+     *
+     * @throws NullPointerException     if {@code null} is passed to any of the parameters
+     *
+     * @since   0.4.0
+     */
+    public static <T> Argument<T> build(ValueParser<T> parser) {
+        return new Builder<>(parser).build();
+    }
+
     final ValueParser<T> parser;
     private final boolean isOptional;
 

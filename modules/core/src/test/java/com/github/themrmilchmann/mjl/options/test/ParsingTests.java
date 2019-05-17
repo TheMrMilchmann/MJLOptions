@@ -44,7 +44,7 @@ public final class ParsingTests {
     @BeforeGroups(TEST_GROUPS_PARSING)
     private void initParsingTests() {
         this.argPool = OptionPool.builder()
-            .withArg(this.arg0 = Argument.builder(ValueParser.STRING, true).build())
+            .withArg(this.arg0 = Argument.builder(ValueParser.STRING).optional(true).build())
             .build();
 
         this.optPool = OptionPool.builder()

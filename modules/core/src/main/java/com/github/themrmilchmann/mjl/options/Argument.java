@@ -60,24 +60,7 @@ public final class Argument<T> {
      * @since   0.1.0
      */
     public static <T> Builder<T> builder(ValueParser<T> parser) {
-        return builder(parser, false);
-    }
-
-    /**
-     * Returns a builder instance for arguments with the given {@link ValueParser parser}.
-     *
-     * @param <T>           the type of the arguments value
-     * @param parser        the parser for the argument
-     * @param isOptional    whether or not the argument is optional
-     *
-     * @return  a builder instance
-     *
-     * @throws NullPointerException if {@code null} is passed to any of the parameters
-     *
-     * @since   0.1.0
-     */
-    public static <T> Builder<T> builder(ValueParser<T> parser, boolean isOptional) {
-        return new Builder<>(parser, isOptional);
+        return new Builder<>(parser);
     }
 
     final ValueParser<T> parser;
@@ -161,15 +144,15 @@ public final class Argument<T> {
     public static final class Builder<T> {
 
         private final ValueParser<T> parser;
-        private final boolean isOptional;
+        private boolean isOptional;
 
         @Nullable
         private T defaultValue;
         private boolean hasDefault;
 
-        private Builder(ValueParser<T> parser, boolean isOptional) {
+        private Builder(ValueParser<T> parser) {
             this.parser = Objects.requireNonNull(parser);
-            this.isOptional = isOptional;
+            this.isOptional = false;
         }
 
         /**
@@ -181,6 +164,22 @@ public final class Argument<T> {
          */
         public Argument<T> build() {
             return new Argument<>(this.parser, this.isOptional, this.defaultValue, this.hasDefault);
+        }
+
+        /**
+         * Sets whether or not the argument will be optional.
+         *
+         * <p>Overrides any previously set default value.</p>
+         *
+         * @param value whether or not the argument will be optional
+         *
+         * @return  this builder instance
+         *
+         * @since   0.4.0
+         */
+        public Builder<T> optional(boolean value) {
+            this.isOptional = value;
+            return this;
         }
 
         /**

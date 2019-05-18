@@ -194,7 +194,8 @@ public final class OptionParser {
                     // Check configuration
                     if (markerValueRef != null) throwAtField(field, errors, "@WildcardHolder may not have a @MarkerValueRef");
 
-                    Argument.Builder<?> bArg = Argument.builder(valueParser, argHolder.optional());
+                    Argument.Builder<?> bArg = Argument.builder(valueParser)
+                        .optional(argHolder.optional());
 
                     if (defaultValueRef != null) {
                         String ref = defaultValueRef.value();
@@ -225,7 +226,7 @@ public final class OptionParser {
                 } else if (varargHolder != null) {
                     if (varargFieldWrapper != null) throwAtField(field, errors, "There must be at most one @VarargHolder");
 
-                    Argument<?> arg = Argument.builder(valueParser, varargHolder.optional()).build();
+                    Argument<?> arg = Argument.builder(valueParser).optional(varargHolder.optional()).build();
                     varargFieldWrapper = new ArgFieldWrapper(field, arg, Integer.MAX_VALUE);
                 }
             }

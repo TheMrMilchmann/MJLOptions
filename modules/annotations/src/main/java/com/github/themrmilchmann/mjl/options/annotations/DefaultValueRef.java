@@ -21,13 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A reference to a default value for the parameter represented by the annotated field.
+ * A reference to a default value for the parameter represented by the annotated element.
  *
  * @since   0.4.0
  *
  * @author  Leon Linhart
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DefaultValueRef {
 

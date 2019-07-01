@@ -21,13 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Fields marked with this annotation are mapped to vararg arguments.
+ * Elements marked with this annotation are mapped to vararg arguments.
  *
  * @since   0.4.0
  *
  * @author  Leon Linhart
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VarargHolder {
 

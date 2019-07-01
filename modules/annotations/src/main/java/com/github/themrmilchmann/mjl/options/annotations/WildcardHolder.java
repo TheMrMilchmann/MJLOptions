@@ -21,12 +21,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Fields marked with this annotation are mapped hold wildcard options.
+ * Elements marked with this annotation are mapped hold wildcard options.
  *
  * @since   0.4.0
  *
  * @author  Leon Linhart
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WildcardHolder {}

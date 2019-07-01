@@ -21,13 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A reference to a parser for the value of the parameter represented by the annotated field.
+ * A reference to a parser for the value of the parameter represented by the annotated elements.
  *
  * @since   0.4.0
  *
  * @author  Leon Linhart
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValueParserRef {
 

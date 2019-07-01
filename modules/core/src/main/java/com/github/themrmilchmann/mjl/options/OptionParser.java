@@ -96,6 +96,7 @@ public final class OptionParser {
      *
      * @since   0.4.0
      */
+    @SuppressWarnings("unchecked")
     public static <T> T parseFragments(Class<T> cls, MethodHandles.Lookup lookup, String... fragments) {
         List<Throwable> errors = new ArrayList<>();
 

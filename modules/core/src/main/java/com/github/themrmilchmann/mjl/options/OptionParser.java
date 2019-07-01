@@ -25,9 +25,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import com.github.themrmilchmann.mjl.options.annotations.ArgumentHolder;
 import com.github.themrmilchmann.mjl.options.annotations.DefaultValueRef;
@@ -62,6 +64,7 @@ public final class OptionParser {
      * @return  an immutable set of parsed values
      *
      * @throws ParsingException if any error occurs during parsing
+     * @throws RestrictionViolatedException if any of the given pool's restrictions have been violated
      *
      * @see #parseFragments(Class, MethodHandles.Lookup, String...)
      * @see #parseLine(OptionPool, String)
@@ -74,6 +77,16 @@ public final class OptionParser {
 
         Map<Object, Object> values = Collections.unmodifiableMap(parser.values);
         Map<String, String> dynamics = Collections.unmodifiableMap(parser.dynamics);
+
+        Map<Option<?>, Object> options = values.entrySet().stream()
+            .filter(entry -> entry.getKey() instanceof Option)
+            .collect(Collectors.toMap(entry -> (Option<?>) entry.getKey(), Map.Entry::getValue));
+
+        Set<Restriction> violatedRestrictions = pool.restrictions.stream()
+            .filter(restriction -> restriction.isViolatedBy(options.keySet()))
+            .collect(Collectors.toSet());
+
+        if (!violatedRestrictions.isEmpty()) throw new RestrictionViolatedException(violatedRestrictions);
 
         return new OptionSet(pool, values, dynamics);
     }
@@ -90,6 +103,7 @@ public final class OptionParser {
      *
      * @throws ClassPoolConfigurationException  if the data class is ill-formatted
      * @throws ParsingException                 if any error occurs during parsing
+     * @throws RestrictionViolatedException if any of the induced pool's restrictions have been violated
      *
      * @see #parseFragments(OptionPool, String...)
      * @see #parseLine(OptionPool, String)
@@ -270,6 +284,7 @@ public final class OptionParser {
      * @return  an immutable set of parsed values
      *
      * @throws ParsingException if any error occurs during parsing
+     * @throws RestrictionViolatedException if any of the given pool's restrictions have been violated
      *
      * @see #parseFragments(OptionPool, String...)
      * @see #parseLine(Class, MethodHandles.Lookup, String)
@@ -292,6 +307,7 @@ public final class OptionParser {
      *
      * @throws ClassPoolConfigurationException  if the data class is ill-formatted
      * @throws ParsingException                 if any error occurs during parsing
+     * @throws RestrictionViolatedException if any of the induced pool's restrictions have been violated
      *
      * @see #parseFragments(OptionPool, String...)
      * @see #parseLine(OptionPool, String)

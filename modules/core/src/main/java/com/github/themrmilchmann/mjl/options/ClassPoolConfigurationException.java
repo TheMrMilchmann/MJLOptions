@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author  Leon Linhart
  */
-public final class ClassPoolConfigurationException extends RuntimeException {
+public final class ClassPoolConfigurationException extends ConfigurationException {
 
     private final List<Throwable> errors;
 

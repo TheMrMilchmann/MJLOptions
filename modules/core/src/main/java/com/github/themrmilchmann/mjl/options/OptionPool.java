@@ -18,9 +18,12 @@ package com.github.themrmilchmann.mjl.options;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import com.github.themrmilchmann.mjl.options.internal.KNFFormula;
 
 /**
  * An {@code OptionPool} is a collection of available {@link Argument arguments} and {@link Option options}.
@@ -46,12 +49,14 @@ public final class OptionPool {
     private final boolean isLastVararg;
     private final Map<Character, Option<?>> optShortTokens;
     private final Map<String, Option<?>> optLongTokens;
+    final Set<Restriction> restrictions;
 
-    private OptionPool(Argument[] args, boolean isLastVararg, Map<Character, Option<?>> sTokens, Map<String, Option<?>> lTokens) {
+    private OptionPool(Argument[] args, boolean isLastVararg, Map<Character, Option<?>> sTokens, Map<String, Option<?>> lTokens, Set<Restriction> restrictions) {
         this.args = args;
         this.isLastVararg = isLastVararg;
         this.optShortTokens = sTokens;
         this.optLongTokens = lTokens;
+        this.restrictions = restrictions;
     }
 
     /**
@@ -222,6 +227,7 @@ public final class OptionPool {
         private final List<Argument<?>> args = new ArrayList<>();
         private final Map<Character, Option<?>> sTokens = new HashMap<>();
         private final Map<String, Option<?>> lTokens = new HashMap<>();
+        private final Set<Restriction> restrictions = new HashSet<>();
         private boolean isLastVararg;
 
         private Builder() {}
@@ -229,12 +235,23 @@ public final class OptionPool {
         /**
          * Returns a new immutable {@linkplain OptionPool}.
          *
+         * <p>This method performs extensive reachability checks and throws if one or more options are unreachable due
+         * to the restrictions in place.</p>
+         *
          * @return  a new immutable pool
+         *
+         * @throws UnreachableOptionException   if one or more options are unreachable to due the restrictions in place
          *
          * @since   0.1.0
          */
         public OptionPool build() {
-            return new OptionPool(this.args.toArray(new Argument[0]), this.isLastVararg, this.sTokens, this.lTokens);
+            KNFFormula.Builder<Option<?>> formula = KNFFormula.builder(this.lTokens.values());
+            this.restrictions.stream().map(Restriction::getClauses).flatMap(Set::stream).forEach(formula::and);
+
+            Set<Option<?>> unreachable = formula.calculateUnreachableOptions();
+            if (!unreachable.isEmpty()) throw new UnreachableOptionException(unreachable);
+
+            return new OptionPool(this.args.toArray(new Argument[0]), this.isLastVararg, this.sTokens, this.lTokens, this.restrictions);
         }
 
         /**
@@ -282,6 +299,22 @@ public final class OptionPool {
         public Builder withOption(Option<?> opt) {
             this.lTokens.put(opt.getLongToken(), opt);
             if (opt.getShortToken() != null) this.sTokens.put(opt.getShortToken(), opt);
+
+            return this;
+        }
+
+        /**
+         * Adds a {@link Restriction} for the option pool.
+         *
+         * @param restriction   the restriction to add to this pool
+         *
+         * @return  this builder instance
+         *
+         * @since   0.4.0
+         */
+        public Builder withRestriction(Restriction restriction) {
+            if (!this.lTokens.values().containsAll(restriction.getOptions())) throw new IllegalArgumentException();
+            this.restrictions.add(restriction);
 
             return this;
         }

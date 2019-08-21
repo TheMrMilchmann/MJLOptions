@@ -103,6 +103,8 @@ public final class Restriction {
      *
      * @param X the options
      *
+     * @return  an opaque restriction that models the requested relationship
+     *
      * @since   0.4.0
      */
     public static Restriction mutuallyExclude(Option<?>... X) {
@@ -113,6 +115,8 @@ public final class Restriction {
      * If one of the options in {@code X} is present, all others must also be.
      *
      * @param X the options
+     *
+     * @return  an opaque restriction that models the requested relationship
      *
      * @since   0.4.0
      */

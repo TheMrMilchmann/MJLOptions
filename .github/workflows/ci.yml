@@ -1,0 +1,80 @@
+name: CI
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    linux_8:
+        name: Linux (OpenJDK 8)
+        runs-on: ubuntu-latest
+        container: openjdk:8
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+    linux_9:
+        name: Linux (OpenJDK 9)
+        runs-on: ubuntu-latest
+        container: openjdk:9
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+    linux_10:
+        name: Linux (OpenJDK 10)
+        runs-on: ubuntu-latest
+        container: openjdk:10
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+    linux_11:
+        name: Linux (OpenJDK 11)
+        runs-on: ubuntu-latest
+        container: openjdk:11
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+    linux_12:
+        name: Linux (OpenJDK 12)
+        runs-on: ubuntu-latest
+        container: openjdk:12
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+    linux_13:
+        name: Linux (OpenJDK 13)
+        runs-on: ubuntu-latest
+        container: openjdk:13
+        steps:
+            - uses: actions/checkout@v1
+            - run: |
+                ./gradlew --version
+                ./gradlew check -Psnapshot
+
+#    linux_14:
+#        name: Linux (OpenJDK 14)
+#        runs-on: ubuntu-latest
+#        container: openjdk:14
+#        steps:
+#            - uses: actions/checkout@v1
+#            - run: |
+#                  ./gradlew --version
+#                  ./gradlew check -Psnapshot

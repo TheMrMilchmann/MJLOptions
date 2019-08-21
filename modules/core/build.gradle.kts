@@ -36,6 +36,15 @@ tasks {
         if (Jvm.current().javaVersion!! > JavaVersion.VERSION_1_8) {
             // Workaround for https://github.com/gradle/gradle/issues/2510
             options.compilerArgs.addAll(listOf("--release", "8"))
+
+            /*
+             * There is a bug in JDK 9 preventing usage of the --release option from Gradle, thus the process needs to
+             * be run in a fork. (https://bugs-stage.openjdk.java.net/browse/JDK-8139607)
+             */
+            if (Jvm.current().javaVersion!! == JavaVersion.VERSION_1_9) {
+                options.isFork = true
+                options.forkOptions.javaHome = Jvm.current().javaHome!!
+            }
         }
     }
 
@@ -51,8 +60,14 @@ tasks {
         sourceCompatibility = "9"
         targetCompatibility = "9"
 
-        // Workaround for https://github.com/gradle/gradle/issues/2510
-        options.compilerArgs.addAll(listOf("--release", "9"))
+        /*
+         * There is a bug in JDK 9 preventing usage of the --release option from Gradle. Luckily there is need no need
+         * to specify --release 9 when we are running on JDK9. (https://bugs-stage.openjdk.java.net/browse/JDK-8139607)
+         */
+        if (Jvm.current().javaVersion!! != JavaVersion.VERSION_1_9) {
+            // Workaround for https://github.com/gradle/gradle/issues/2510
+            options.compilerArgs.addAll(listOf("--release", "9"))
+        }
 
         afterEvaluate {
             // module-path hack
@@ -79,13 +94,15 @@ tasks {
         }
     }
 
+    classes {
+        dependsOn(compileJava9)
+    }
+
     test {
         useTestNG()
     }
 
     jar {
-        dependsOn(compileJava9)
-
         archiveBaseName.set(artifactName)
 
         into("META-INF/versions/9") {

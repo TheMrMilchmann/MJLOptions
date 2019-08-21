@@ -25,7 +25,7 @@
  */
 module com.github.themrmilchmann.mjl.options {
 
-    requires com.github.themrmilchmann.mjl.options.annotations;
+    requires transitive com.github.themrmilchmann.mjl.options.annotations;
 
     requires static jsr305;
 

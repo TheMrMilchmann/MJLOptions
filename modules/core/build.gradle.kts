@@ -63,11 +63,11 @@ tasks {
         options.encoding = "utf-8"
     }
 
-    "test"(Test::class) {
+    test {
         useTestNG()
     }
 
-    "jar"(Jar::class) {
+    jar {
         dependsOn(compileJava9)
 
         archiveBaseName.set(artifactName)
@@ -105,8 +105,6 @@ tasks {
             includeEmptyDirs = false
         }
     }
-
-    val javadoc = "javadoc"(Javadoc::class)
 
     create<Jar>("javadocJar") {
         dependsOn(javadoc)
@@ -170,11 +168,8 @@ publishing {
 }
 
 signing {
+    isRequired = deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE
     sign(publishing.publications)
-}
-
-val signMavenJavaPublication by tasks.getting {
-    onlyIf { deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE }
 }
 
 dependencies {

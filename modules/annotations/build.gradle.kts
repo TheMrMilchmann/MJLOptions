@@ -16,7 +16,7 @@
 import com.github.themrmilchmann.build.*
 
 plugins {
-    java
+    `java-library`
     signing
     `maven-publish`
 }
@@ -61,7 +61,7 @@ tasks {
         options.isFork = true
     }
 
-    "jar"(Jar::class) {
+    jar {
         dependsOn(compileJava9)
 
         archiveBaseName.set(artifactName)
@@ -100,8 +100,6 @@ tasks {
         }
     }
 
-    val javadoc = "javadoc"(Javadoc::class)
-
     create<Jar>("javadocJar") {
         dependsOn(javadoc)
 
@@ -132,7 +130,7 @@ publishing {
 
             pom {
                 name.set(project.name)
-                description.set("Marker annotations for OptionPool generation.")
+                description.set("Marker annotations for configuring MJLOptions dynamically.")
                 packaging = "jar"
                 url.set("https://github.com/TheMrMilchmann/MJLOptions")
 
@@ -164,9 +162,6 @@ publishing {
 }
 
 signing {
+    isRequired = deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE
     sign(publishing.publications)
-}
-
-val signMavenJavaPublication by tasks.getting {
-    onlyIf { deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE }
 }

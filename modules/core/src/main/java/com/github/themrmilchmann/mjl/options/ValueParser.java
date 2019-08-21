@@ -36,7 +36,7 @@ public interface ValueParser<T> {
      *
      * @since   0.1.0
      */
-    ValueParser<Boolean> BOOLEAN = (it) -> it.equals("1") || it.equals("true");
+    ValueParser<Boolean> BOOLEAN = (it) -> it.equals("1") || it.equalsIgnoreCase("true");
 
     /**
      * A simple parser for parsing {@code Byte} values.

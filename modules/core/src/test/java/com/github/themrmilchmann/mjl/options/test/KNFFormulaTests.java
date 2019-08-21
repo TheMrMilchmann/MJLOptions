@@ -26,10 +26,10 @@ import static org.testng.Assert.*;
 
 public final class KNFFormulaTests {
 
-    private static final String A = "X";
-    private static final String B = "Y";
-    private static final String C = "Z";
-    private static final String D = "Z";
+    private static final String A = "A";
+    private static final String B = "B";
+    private static final String C = "C";
+    private static final String D = "D";
 
     private static final Set<String> tau = setOf(A, B, C, D);
 
@@ -39,12 +39,12 @@ public final class KNFFormulaTests {
         return Collections.unmodifiableSet(tau);
     }
 
-    @Test
+    @Test(enabled = false) // Can fail depending on the set implementation. Use only for local testing in dev env!
     public void testToBooleanString() {
-        KNFFormula<String> formula = KNFFormula.builder(tau).build();
+        KNFFormula<String> formula = KNFFormula.builder(tau, false).build();
         assertEquals(formula.toBooleanString(), "()");
 
-        formula = KNFFormula.builder(tau)
+        formula = KNFFormula.builder(tau, false)
             .and(setOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
             .and(setOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
             .and(setOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
@@ -52,12 +52,12 @@ public final class KNFFormulaTests {
         assertEquals(formula.toBooleanString(), "((\u00ACA \u2228 B) \u2227 (A \u2228 B) \u2227 (D \u2228 C \u2228 \u00ACB))");
     }
 
-    @Test
+    @Test(enabled = false) // Can fail depending on the set implementation. Use only for local testing in dev env!
     public void testToSetString() {
-        KNFFormula<String> formula = KNFFormula.builder(tau).build();
+        KNFFormula<String> formula = KNFFormula.builder(tau, false).build();
         assertEquals(formula.toSetString(), "{}");
 
-        formula = KNFFormula.builder(tau)
+        formula = KNFFormula.builder(tau, false)
             .and(setOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
             .and(setOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
             .and(setOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))

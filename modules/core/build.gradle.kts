@@ -173,7 +173,7 @@ signing {
 }
 
 dependencies {
-    api(project(":modules.annotations"))
+    api(project(":modules.annotations", "archives")) // FIXME: Project dependency does not respect MR module-descriptor
     compileOnly(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2")
 
     implementation(group = "net.bytebuddy", name= "byte-buddy", version = "1.10.1")

@@ -53,7 +53,7 @@ public interface ValueParser<T> {
      * @since   0.4.0
      */
     ValueParser<Character> CHARACTER = it -> {
-        if (it.length() != 1) throw new IllegalArgumentException();
+        if (it.length() != 1) throw new ParsingException("Character values may only contain a single char.", new IllegalArgumentException());
         return it.charAt(0);
     };
 

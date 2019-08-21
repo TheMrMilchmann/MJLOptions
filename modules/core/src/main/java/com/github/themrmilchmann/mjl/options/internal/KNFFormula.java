@@ -29,7 +29,11 @@ import java.util.stream.Collectors;
 public final class KNFFormula<T> {
 
     public static <T> KNFFormula.Builder<T> builder(Collection<T> options) {
-        return new KNFFormula.Builder<>(options);
+        return builder(options, true);
+    }
+
+    public static <T> KNFFormula.Builder<T> builder(Collection<T> options, boolean varsToClauses) {
+        return new KNFFormula.Builder<>(options, varsToClauses);
     }
 
     private final Set<Set<Literal<T>>> clauses;
@@ -76,8 +80,10 @@ public final class KNFFormula<T> {
         while (!satisfiable.isPresent()) {
             if (clauses.isEmpty()) {
                 satisfiable = Optional.of(true);
+                break;
             } else if (clauses.parallelStream().anyMatch(Set::isEmpty)) {
                 satisfiable = Optional.of(false);
+                break;
             }
 
             Optional<Set<Literal<T>>> unitClause;
@@ -178,9 +184,9 @@ public final class KNFFormula<T> {
         private final Set<Set<Literal<T>>> clauses = new HashSet<>();
         private final Collection<T> vars;
 
-        private Builder(Collection<T> vars) {
+        private Builder(Collection<T> vars, boolean varsToClauses) {
             this.vars = vars;
-            vars.stream().map(Literal::pos).map(Collections::singleton).forEach(this::and);
+            if (varsToClauses) vars.stream().map(Literal::pos).map(Collections::singleton).forEach(this::and);
         }
 
         public Builder<T> and(Set<Literal<T>> clause) {

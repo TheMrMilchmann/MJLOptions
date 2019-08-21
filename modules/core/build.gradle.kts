@@ -16,7 +16,7 @@
 import com.github.themrmilchmann.build.*
 
 plugins {
-    java
+    `java-library`
     signing
     `maven-publish`
 }
@@ -178,8 +178,10 @@ val signMavenJavaPublication by tasks.getting {
 }
 
 dependencies {
-    compile(project(":modules.annotations"))
-    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
+    api(project(":modules.annotations"))
+    compileOnly(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2")
 
-    testCompile("org.testng:testng:6.14.3")
+    implementation(group = "net.bytebuddy", name= "byte-buddy-parent", version = "1.10.1")
+
+    testCompile(group = "org.testng", name = "testng", version = "6.14.3")
 }

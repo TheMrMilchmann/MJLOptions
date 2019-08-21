@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import com.github.themrmilchmann.build.*
+import org.gradle.internal.jvm.*
 
 plugins {
     `java-library`
@@ -22,6 +23,7 @@ plugins {
 }
 
 val artifactName = "mjl-options-annotations"
+val currentJVMAtLeast9 = Jvm.current().javaVersion!! >= JavaVersion.VERSION_1_9
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -29,14 +31,15 @@ java {
 }
 
 tasks {
-    val compileJava9 = create<JavaCompile>("compileJava9") {
-        val jdk9Props = arrayOf(
-            "JDK9_HOME",
-            "JAVA9_HOME",
-            "JDK_19",
-            "JDK_9"
-        )
+    compileJava {
+        /* JDK 8 does not support the --release option */
+        if (Jvm.current().javaVersion!! > JavaVersion.VERSION_1_8) {
+            // Workaround for https://github.com/gradle/gradle/issues/2510
+            options.compilerArgs.addAll(listOf("--release", "8"))
+        }
+    }
 
+    val compileJava9 = create<JavaCompile>("compileJava9") {
         val ftSource = fileTree("src/main/java-jdk9")
         ftSource.include("**/*.java")
         options.sourcepath = files("src/main/java-jdk9")
@@ -48,17 +51,32 @@ tasks {
         sourceCompatibility = "9"
         targetCompatibility = "9"
 
+        // Workaround for https://github.com/gradle/gradle/issues/2510
+        options.compilerArgs.addAll(listOf("--release", "9"))
+
         afterEvaluate {
             // module-path hack
             options.compilerArgs.add("--module-path")
             options.compilerArgs.add(compileJava.get().classpath.asPath)
         }
 
-        val jdk9Home = jdk9Props.mapNotNull { System.getenv(it) }
-            .map { File(it) }
-            .firstOrNull(File::exists) ?: throw Error("Could not find valid JDK9 home")
-        options.forkOptions.javaHome = jdk9Home
-        options.isFork = true
+        /*
+         * If the JVM used to invoke Gradle is JDK 9 or later, there is no reason to require a separate JDK 9 instance.
+         */
+        if (!currentJVMAtLeast9) {
+            val jdk9Props = arrayOf(
+                "JDK9_HOME",
+                "JAVA9_HOME",
+                "JDK_19",
+                "JDK_9"
+            )
+
+            val jdk9Home = jdk9Props.mapNotNull { System.getenv(it) }
+                .map { File(it) }
+                .firstOrNull(File::exists) ?: throw Error("Could not find valid JDK9 home")
+            options.forkOptions.javaHome = jdk9Home
+            options.isFork = true
+        }
     }
 
     jar {
@@ -120,7 +138,7 @@ publishing {
             }
         }
     }
-    (publications) {
+    publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             artifact(tasks["sourcesJar"])

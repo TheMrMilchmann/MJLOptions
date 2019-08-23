@@ -93,21 +93,17 @@ public final class Option<T> {
 
     @Nullable
     private final T defaultValue;
-    private final boolean hasDefaultValue;
 
     @Nullable
     private final T markerValue;
-    private final boolean hasMarkerValue;
     private final boolean isMarkerOnly;
 
-    private Option(String longToken, @Nullable Character shortToken, ValueParser<T> parser, @Nullable T defaultValue, boolean hasDefaultValue, @Nullable T markerValue, boolean hasMarkerValue, boolean isMarkerOnly) {
+    private Option(String longToken, @Nullable Character shortToken, ValueParser<T> parser, @Nullable T defaultValue, @Nullable T markerValue, boolean isMarkerOnly) {
         this.shortToken = shortToken;
         this.longToken = longToken;
         this.parser = parser;
         this.defaultValue = defaultValue;
-        this.hasDefaultValue = hasDefaultValue;
         this.markerValue = markerValue;
-        this.hasMarkerValue = hasMarkerValue;
         this.isMarkerOnly = isMarkerOnly;
     }
 
@@ -135,11 +131,9 @@ public final class Option<T> {
     }
 
     /**
-     * Returns this option's default value.
+     * Returns this option's default value, or {@code null}.
      *
-     * @return  this option's default value
-     *
-     * @throws IllegalArgumentException if this option does not have a default value
+     * @return  this option's default value, or {@code null}
      *
      * @see #hasDefaultValue()
      *
@@ -147,7 +141,6 @@ public final class Option<T> {
      */
     @Nullable
     public T getDefaultValue() {
-        if (!this.hasDefaultValue) throw new IllegalStateException(this.toString() + " does not have a default value");
         return this.defaultValue;
     }
 
@@ -161,15 +154,13 @@ public final class Option<T> {
      * @since   0.1.0
      */
     public boolean hasDefaultValue() {
-        return this.hasDefaultValue;
+        return this.defaultValue != null;
     }
 
     /**
-     * Returns this option's marker value.
+     * Returns this option's marker value, or {@code null}.
      *
-     * @return  this option's marker value
-     *
-     * @throws IllegalArgumentException if this option does not have a marker value
+     * @return  this option's marker value, or {@code null}
      *
      * @see #hasMarkerValue()
      *
@@ -177,7 +168,6 @@ public final class Option<T> {
      */
     @Nullable
     public T getMarkerValue() {
-        if (!this.hasMarkerValue) throw new IllegalStateException(this.toString() + " does not have a marker value");
         return this.markerValue;
     }
 
@@ -191,7 +181,7 @@ public final class Option<T> {
      * @since   0.1.0
      */
     public boolean hasMarkerValue() {
-        return this.hasMarkerValue;
+        return this.markerValue != null;
     }
 
     /**
@@ -217,10 +207,8 @@ public final class Option<T> {
         StringBuilder sb = new StringBuilder("Option[");
         sb.append("long=").append(this.longToken);
         if (this.shortToken != null) sb.append(", short=").append(this.shortToken);
-        sb.append(", hasDefaultValue=").append(this.hasDefaultValue);
-        if (this.hasDefaultValue) sb.append(", defaultValue=").append(this.defaultValue);
-        sb.append(", hasMarkerValue=").append(this.hasMarkerValue);
-        if (this.hasMarkerValue) sb.append(", markerValue=").append(this.markerValue);
+        if (this.defaultValue != null) sb.append(", defaultValue=").append(this.defaultValue);
+        if (this.markerValue != null) sb.append(", markerValue=").append(this.markerValue);
         sb.append(", markerOnly=").append(this.isMarkerOnly);
         sb.append("]");
 
@@ -244,11 +232,9 @@ public final class Option<T> {
 
         @Nullable
         private T defaultValue;
-        private boolean hasDefaultValue;
 
         @Nullable
         private T markerValue;
-        private boolean hasMarkerValue;
         private boolean isMarkerOnly;
 
         private Builder(String longToken, ValueParser<T> parser) {
@@ -266,7 +252,7 @@ public final class Option<T> {
          * @since   0.1.0
          */
         public Option<T> build() {
-            return new Option<>(this.longToken, this.shortToken, this.parser, this.defaultValue, this.hasDefaultValue, this.markerValue, this.hasMarkerValue, this.isMarkerOnly);
+            return new Option<>(this.longToken, this.shortToken, this.parser, this.defaultValue, this.markerValue, this.isMarkerOnly);
         }
 
         /**
@@ -278,20 +264,18 @@ public final class Option<T> {
          *
          * @return  this builder instance
          *
+         * @throws NullPointerException if the given value is {@code null}
+         *
          * @since   0.1.0
          */
-        public Builder<T> withDefaultValue(@Nullable T value) {
-            this.defaultValue = value;
-            this.hasDefaultValue = true;
-
+        public Builder<T> withDefaultValue(T value) {
+            this.defaultValue = Objects.requireNonNull(value, "The value of an option may not be null.");
             return this;
         }
 
         @SuppressWarnings("unchecked")
-        Builder<T> withDefaultValueInternal(@Nullable Object value) {
-            this.defaultValue = (T) value;
-            this.hasDefaultValue = true;
-
+        Builder<T> withDefaultValueInternal(Object value) {
+            this.defaultValue = (T) Objects.requireNonNull(value, "The value of an option may not be null.");
             return this;
         }
 
@@ -307,9 +291,11 @@ public final class Option<T> {
          *
          * @return  this builder instance
          *
+         * @throws NullPointerException if the given value is {@code null}
+         *
          * @since   0.1.0
          */
-        public Builder<T> withMarkerValue(@Nullable T value) {
+        public Builder<T> withMarkerValue(T value) {
             return this.withMarkerValue(value, false);
         }
 
@@ -323,20 +309,20 @@ public final class Option<T> {
          *
          * @return  this builder instance
          *
+         * @throws NullPointerException if the given value is {@code null}
+         *
          * @since   0.1.0
          */
-        public Builder<T> withMarkerValue(@Nullable T value, boolean isMarkerOnly) {
-            this.markerValue = value;
-            this.hasMarkerValue = true;
+        public Builder<T> withMarkerValue(T value, boolean isMarkerOnly) {
+            this.markerValue = Objects.requireNonNull(value, "The value of an option may not be null.");
             this.isMarkerOnly = isMarkerOnly;
 
             return this;
         }
 
         @SuppressWarnings("unchecked")
-        Builder<T> withMarkerValueInternal(@Nullable Object value, boolean isMarkerOnly) {
-            this.markerValue = (T) value;
-            this.hasMarkerValue = true;
+        Builder<T> withMarkerValueInternal(Object value, boolean isMarkerOnly) {
+            this.markerValue = (T) Objects.requireNonNull(value, "The value of an option may not be null.");
             this.isMarkerOnly = isMarkerOnly;
 
             return this;

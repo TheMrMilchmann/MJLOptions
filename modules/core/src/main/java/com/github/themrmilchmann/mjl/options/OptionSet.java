@@ -17,7 +17,6 @@ package com.github.themrmilchmann.mjl.options;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -55,8 +54,9 @@ public final class OptionSet {
      * Returns the value for the given {@link Argument argument}.
      *
      * <ol>
-     *     <li>Returns the explicitly set value for the given argument. (if available)</li>
-     *     <li>Returns the default value for the given argument. (if available)</li>
+     *     <li>Returns the explicitly set value for the given argument (if available).</li>
+     *     <li>Returns the default value for the given argument (if available).</li>
+     *     <li>Returns {@code null}.</li>
      * </ol>
      *
      * @param <T>   the type of the argument's value
@@ -66,8 +66,6 @@ public final class OptionSet {
      *
      * @throws NullPointerException     if the given argument is {@code null}
      * @throws IllegalArgumentException if the given argument is <em>not</em> in the pool that this set was created from
-     * @throws NoSuchElementException   if no value has been set explicitly for the given argument and the argument does
-     *                                  <em>not</em> have a default value
      *
      * @since   0.1.0
      */
@@ -75,25 +73,16 @@ public final class OptionSet {
     @Nullable
     public <T> T get(Argument<T> arg) {
         if (!this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
-
-        T res;
-
-        if (this.values.containsKey(arg)) {
-            res = (T) this.values.get(arg);
-        } else {
-            if (!arg.hasDefaultValue()) throw new NoSuchElementException();
-            res = arg.getDefaultValue();
-        }
-
-        return res;
+        return this.values.containsKey(arg) ? (T) this.values.get(arg) : arg.getDefaultValue();
     }
 
     /**
      * Returns the value for the given {@link Option option}.
      *
      * <ol>
-     *     <li>Returns the explicitly set value for the given option. (if available)</li>
-     *     <li>Returns the default value for the given option. (if available)</li>
+     *     <li>Returns the explicitly set value for the given option (if available).</li>
+     *     <li>Returns the default value for the given option (if available).</li>
+     *     <li>Returns {@code null}.</li>
      * </ol>
      *
      * @param <T>   the type of the option's value
@@ -103,8 +92,6 @@ public final class OptionSet {
      *
      * @throws NullPointerException     if the given option is {@code null}
      * @throws IllegalArgumentException if the given option is <em>not</em> in the pool that this set was created from
-     * @throws NoSuchElementException   if no value has been set explicitly for the given option and the option does
-     *                                  <em>not</em> have a default value
      *
      * @since   0.1.0
      */
@@ -112,26 +99,16 @@ public final class OptionSet {
     @Nullable
     public <T> T get(Option<T> opt) {
         if (!this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();
-
-        T res;
-
-        if (this.values.containsKey(opt)) {
-            res = (T) this.values.get(opt);
-        } else {
-            if (!opt.hasDefaultValue()) throw new NoSuchElementException();
-            res = opt.getDefaultValue();
-        }
-
-        return res;
+        return this.values.containsKey(opt) ? (T) this.values.get(opt) : opt.getDefaultValue();
     }
 
     /**
      * Returns the value for the given {@link Argument argument}.
      *
      * <ol>
-     *     <li>Returns the explicitly set value for the given argument. (if available)</li>
-     *     <li>Returns the default value for the given argument. (if available)</li>
-     *     <li>Returns the given {@code other} value</li>
+     *     <li>Returns the explicitly set value for the given argument (if available).</li>
+     *     <li>Returns the default value for the given argument (if available).</li>
+     *     <li>Returns the given {@code other} value.</li>
      * </ol>
      *
      * @param <T>   the type of the argument's value
@@ -149,27 +126,16 @@ public final class OptionSet {
     @Nullable
     public <T> T getOrElse(Argument<T> arg, @Nullable T other) {
         if (this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
-
-        T res;
-
-        if (this.values.containsKey(arg)) {
-            res = (T) this.values.get(arg);
-        } else if (arg.hasDefaultValue()) {
-            res = arg.getDefaultValue();
-        } else {
-            res = other;
-        }
-
-        return res;
+        return this.values.containsKey(arg) ? (T) this.values.get(arg) : (arg.hasDefaultValue() ? arg.getDefaultValue() : other);
     }
 
     /**
      * Returns the value for the given {@link Argument argument}.
      *
      * <ol>
-     *     <li>Returns the explicitly set value for the given argument. (if available)</li>
-     *     <li>Returns the default value for the given argument. (if available)</li>
-     *     <li>Runs the given {@code factory} and returns its value</li>
+     *     <li>Returns the explicitly set value for the given argument (if available).</li>
+     *     <li>Returns the default value for the given argument (if available).</li>
+     *     <li>Runs the given {@code factory} and returns its value.</li>
      * </ol>
      *
      * @param <T>       the type of the argument's value
@@ -189,26 +155,16 @@ public final class OptionSet {
         if (this.pool.contains(Objects.requireNonNull(arg))) throw new IllegalArgumentException();
         Objects.requireNonNull(factory);
 
-        T res;
-
-        if (this.values.containsKey(arg)) {
-            res = (T) this.values.get(arg);
-        } else if (arg.hasDefaultValue()) {
-            res = arg.getDefaultValue();
-        } else {
-            res = factory.get();
-        }
-
-        return res;
+        return this.values.containsKey(arg) ? (T) this.values.get(arg) : (arg.hasDefaultValue() ? arg.getDefaultValue() : factory.get());
     }
 
     /**
      * Returns the value for the given {@link Option option}.
      *
      * <ol>
-     *     <li>Returns the explicitly set value for the given option. (if available)</li>
-     *     <li>Returns the default value for the given option. (if available)</li>
-     *     <li>Returns the given {@code other} value</li>
+     *     <li>Returns the explicitly set value for the given option (if available).</li>
+     *     <li>Returns the default value for the given option (if available).</li>
+     *     <li>Returns the given {@code other} value.</li>
      * </ol>
      *
      * @param <T>   the type of the option's value
@@ -226,18 +182,7 @@ public final class OptionSet {
     @Nullable
     public <T> T getOrElse(Option<T> opt, @Nullable T other) {
         if (this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();
-
-        T res;
-
-        if (this.values.containsKey(opt)) {
-            res = (T) this.values.get(opt);
-        } else if (opt.hasDefaultValue()) {
-            res = opt.getDefaultValue();
-        } else {
-            res = other;
-        }
-
-        return res;
+        return this.values.containsKey(opt) ? (T) this.values.get(opt) : (opt.hasDefaultValue() ? opt.getDefaultValue() : other);
     }
 
     /**
@@ -266,17 +211,7 @@ public final class OptionSet {
         if (this.pool.contains(Objects.requireNonNull(opt))) throw new IllegalArgumentException();
         Objects.requireNonNull(factory);
 
-        T res;
-
-        if (this.values.containsKey(opt)) {
-            res = (T) this.values.get(opt);
-        } else if (opt.hasDefaultValue()) {
-            res = opt.getDefaultValue();
-        } else {
-            res = factory.get();
-        }
-
-        return res;
+        return this.values.containsKey(opt) ? (T) this.values.get(opt) : (opt.hasDefaultValue() ? opt.getDefaultValue() : factory.get());
     }
 
     /**

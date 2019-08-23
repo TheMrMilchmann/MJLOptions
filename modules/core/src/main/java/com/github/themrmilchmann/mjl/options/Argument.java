@@ -84,21 +84,17 @@ public final class Argument<T> {
 
     @Nullable
     private final T defaultValue;
-    private final boolean hasDefaultValue;
 
-    private Argument(ValueParser<T> parser, boolean isOptional, @Nullable T defaultValue, boolean hasDefaultValue) {
+    private Argument(ValueParser<T> parser, boolean isOptional, @Nullable T defaultValue) {
         this.parser = parser;
         this.isOptional = isOptional;
         this.defaultValue = defaultValue;
-        this.hasDefaultValue = hasDefaultValue;
     }
 
     /**
-     * Returns the default value for this argument.
+     * Returns the default value for this argument, or {@code null}.
      *
-     * @return  the default value for this argument
-     *
-     * @throws IllegalStateException    if this argument does not have a default value
+     * @return  the default value for this argument, or {@code null}
      *
      * @see #hasDefaultValue()
      *
@@ -106,7 +102,6 @@ public final class Argument<T> {
      */
     @Nullable
     public T getDefaultValue() {
-        if (!this.hasDefaultValue) throw new IllegalStateException("Argument does not have a default value: " + this.toString());
         return this.defaultValue;
     }
 
@@ -120,7 +115,7 @@ public final class Argument<T> {
      * @since   0.1.0
      */
     public boolean hasDefaultValue() {
-        return this.hasDefaultValue;
+        return this.defaultValue != null;
     }
 
     /**
@@ -143,8 +138,7 @@ public final class Argument<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder("Argument[");
         sb.append("isOptional=").append(this.isOptional);
-        sb.append(", hasDefaultValue=").append(this.hasDefaultValue);
-        if (this.hasDefaultValue) sb.append(", defaultValue=").append(this.defaultValue);
+        if (this.defaultValue != null) sb.append(", defaultValue=").append(this.defaultValue);
         sb.append("]");
 
         return sb.toString();
@@ -164,7 +158,6 @@ public final class Argument<T> {
 
         @Nullable
         private T defaultValue;
-        private boolean hasDefault;
 
         private Builder(ValueParser<T> parser) {
             this.parser = Objects.requireNonNull(parser);
@@ -179,7 +172,7 @@ public final class Argument<T> {
          * @since   0.1.0
          */
         public Argument<T> build() {
-            return new Argument<>(this.parser, this.isOptional, this.defaultValue, this.hasDefault);
+            return new Argument<>(this.parser, this.isOptional, this.defaultValue);
         }
 
         /**
@@ -209,18 +202,14 @@ public final class Argument<T> {
          *
          * @since   0.1.0
          */
-        public Builder<T> withDefaultValue(@Nullable T value) {
-            this.defaultValue = value;
-            this.hasDefault = true;
-
+        public Builder<T> withDefaultValue(T value) {
+            this.defaultValue = Objects.requireNonNull(value);
             return this;
         }
 
         @SuppressWarnings("unchecked")
-        Argument.Builder<T> withDefaultValueInternal(@Nullable Object value) {
-            this.defaultValue = (T) value;
-            this.hasDefault = true;
-
+        Argument.Builder<T> withDefaultValueInternal(Object value) {
+            this.defaultValue = (T) Objects.requireNonNull(value);
             return this;
         }
 

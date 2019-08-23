@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -489,7 +490,7 @@ public final class OptionParser {
 
                 Argument<?> arg = this.pool.getArgument(argIndex);
                 String rawValue = this.parameters[curIndex];
-                Object value = arg.parser.parse(rawValue);
+                Object value = Objects.requireNonNull(arg.parser.parse(rawValue));
 
                 if (this.pool.getLastArgument() == arg && this.pool.isLastVararg()) {
                     if (varargValues == null) {
@@ -531,7 +532,7 @@ public final class OptionParser {
                     } else if (rawValue == null) {
                         throw new ParsingException("No value specified for fragment '--" + tokens + "'.");
                     } else {
-                        Object value = opt.parser.parse(rawValue);
+                        Object value = Objects.requireNonNull(opt.parser.parse(rawValue));
                         this.values.put(opt, value);
                     }
                 } else if (type == ParameterType.OPTION_BY_SHORT_TOKEN) {
@@ -565,7 +566,7 @@ public final class OptionParser {
                         throw new ParsingException("No value specified for fragment '-" + tokens + "'.");
                     } else {
                         for (Option<?> opt : opts) {
-                            Object value = opt.parser.parse(rawValue);
+                            Object value = Objects.requireNonNull(opt.parser.parse(rawValue));
                             this.values.put(opt, value);
                         }
                     }

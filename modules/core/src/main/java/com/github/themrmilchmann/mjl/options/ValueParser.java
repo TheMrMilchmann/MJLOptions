@@ -15,8 +15,6 @@
  */
 package com.github.themrmilchmann.mjl.options;
 
-import javax.annotation.Nullable;
-
 /**
  * A {@code ValueParser} provides a conversion method to convert a {@linkplain String} to a value.
  *
@@ -45,6 +43,7 @@ public interface ValueParser<T> {
      *
      * @since   0.1.0
      */
+    @SuppressWarnings("NullableProblems")
     ValueParser<Byte> BYTE = Byte::valueOf;
 
     /**
@@ -109,6 +108,7 @@ public interface ValueParser<T> {
      *
      * @since   0.1.0
      */
+    @SuppressWarnings("NullableProblems")
     ValueParser<String> STRING = String::valueOf;
 
     /**
@@ -116,13 +116,12 @@ public interface ValueParser<T> {
      *
      * @param string the {@code String} to be parsed
      *
-     * @return  the parsed value (may be {@code null})
+     * @return  the parsed value (must not be {@code null})
      *
      * @throws ParsingException if an error occurs while parsing
      *
      * @since   0.1.0
      */
-    @Nullable
     T parse(String string);
 
 }

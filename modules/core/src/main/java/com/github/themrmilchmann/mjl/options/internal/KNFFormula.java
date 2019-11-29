@@ -15,9 +15,13 @@
  */
 package com.github.themrmilchmann.mjl.options.internal;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,12 +32,12 @@ import java.util.stream.Collectors;
 
 public final class KNFFormula<T> {
 
-    public static <T> KNFFormula.Builder<T> builder(Collection<T> options) {
-        return builder(options, true);
+    public static <T> KNFFormula.Builder<T> builder(Collection<T> variables) {
+        return builder(variables, true);
     }
 
-    public static <T> KNFFormula.Builder<T> builder(Collection<T> options, boolean varsToClauses) {
-        return new KNFFormula.Builder<>(options, varsToClauses);
+    public static <T> KNFFormula.Builder<T> builder(Collection<T> variables, boolean varsToClauses) {
+        return new KNFFormula.Builder<>(variables, varsToClauses);
     }
 
     private final Set<Set<Literal<T>>> clauses;
@@ -43,7 +47,7 @@ public final class KNFFormula<T> {
     }
 
     private Set<T> calculateUnreachableOptions(Set<T> unreachable) {
-        modifiedDPLL(new HashSet<>(this.clauses), unreachable);
+        modifiedDPLL(this.clauses.stream().map(ArrayList::new).collect(Collectors.toList()), unreachable);
         return unreachable;
     }
 
@@ -73,38 +77,52 @@ public final class KNFFormula<T> {
      *
      * (Thus the algorithm is technically a _harder_ satisfiability check.)
      */
-    private static <T> boolean modifiedDPLL(Set<Set<Literal<T>>> clauses, Set<T> unreachable) {
-        // TODO update the algorithm to make it iterative
-        Optional<Boolean> satisfiable = Optional.empty();
+    private static <T> boolean modifiedDPLL(List<List<Literal<T>>> clauses, Set<T> unreachable) {
+        Deque<Pair<List<List<Literal<T>>>, Set<T>>> stack = new ArrayDeque<>();
+        stack.push(new Pair<>(clauses, unreachable));
 
-        while (!satisfiable.isPresent()) {
-            if (clauses.isEmpty()) {
-                satisfiable = Optional.of(true);
-                break;
-            } else if (clauses.parallelStream().anyMatch(Set::isEmpty)) {
-                satisfiable = Optional.of(false);
-                break;
+        while (!stack.isEmpty()) {
+            Pair<List<List<Literal<T>>>, Set<T>> pair = stack.pop();
+            List<List<Literal<T>>> localClauses = pair.first;
+            Set<T> localUnreachable = pair.second;
+
+            if (localClauses.isEmpty()) {
+                /*
+                 * If the formula is satisfiable under the current assumption, the options reachable under this
+                 * assumption are reachable in at least one valid model. Thus the - now - reachable options need
+                 * to be propagated upwards.
+                 */
+                unreachable.removeIf(var -> !localUnreachable.contains(var));
+                if (unreachable.isEmpty()) return true;
+
+                continue;
             }
 
-            Optional<Set<Literal<T>>> unitClause;
+            if (localClauses.stream().anyMatch(List::isEmpty)) continue;
+
+            Optional<List<Literal<T>>> unitClause;
             Optional<Literal<T>> pureLiteral;
 
-            if ((unitClause = clauses.parallelStream().filter(clause -> clause.size() == 1).findAny()).isPresent()) {
+            if ((unitClause = localClauses.parallelStream().filter(clause -> clause.size() == 1).findAny()).isPresent()) {
                 /*
-                 * If there is only a single literal in a clause, the literal needs to be true for the formula to be clause
-                 * (and thus the formula) to be satisfiable.
+                 * If there is only a single literal in a clause, the literal needs to be true for the formula to be
+                 * clause (and thus the formula) to be satisfiable.
                  *
-                 * As a consequence all clauses containing the literal can be eliminated and the compliment of the literal
-                 * can be eliminated from all remaining clauses.
+                 * As a consequence all clauses containing the literal can be eliminated and the compliment of the
+                 * literal can be eliminated from all remaining clauses.
                  */
-                Literal<T> literal = unitClause.get().stream().findFirst().get();
-                if (literal.pos) unreachable.remove(literal.var);
+                List<Literal<T>> clause = unitClause.get();
 
-                clauses.remove(unitClause.get());
-                clauses.removeIf(clause -> clause.contains(literal.compliment()));
-            } else if ((pureLiteral = clauses.stream()
+                @SuppressWarnings("OptionalGetWithoutIsPresent")
+                Literal<T> literal = clause.stream().findFirst().get();
+
+                if (literal.pos) localUnreachable.remove(literal.var);
+
+                localClauses.removeIf(itClause -> itClause.contains(literal));
+                localClauses.forEach(itClause -> itClause.remove(literal.compliment()));
+            } else if ((pureLiteral = localClauses.stream()
                 // Create a stream of literals
-                .flatMap(Set::stream)
+                .flatMap(List::stream)
                 // Filter literals that are in more than one clause
                 .distinct()
                 // Collect all literals by their variable
@@ -116,52 +134,38 @@ public final class KNFFormula<T> {
                 .map(literals -> literals.get(0))
                 .findAny()
             ).isPresent()) {
-                /*
-                 * TODO doc
-                 */
                 Literal<T> literal = pureLiteral.get();
-                if (literal.pos) unreachable.remove(literal.var);
+                if (literal.pos) localUnreachable.remove(literal.var);
 
-                clauses.removeIf(clause -> clause.contains(literal));
+                localClauses.removeIf(clause -> clause.contains(literal));
             } else {
-                Optional<Map.Entry<Set<Literal<T>>, Long>> shortestClause = clauses.stream()
+                Optional<Map.Entry<List<Literal<T>>, Long>> shortestClause = localClauses.stream()
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()
                     .min((a, b) -> Long.compare(b.getValue(), a.getValue()));
+
+                @SuppressWarnings("OptionalGetWithoutIsPresent")
                 Literal<T> literal = shortestClause.get().getKey().stream().findFirst().get();
 
                 for (boolean value : new boolean[] { true, false }) {
-                    Set<Set<Literal<T>>> _clauses = new HashSet<>(clauses);
+                    List<List<Literal<T>>> _clauses = localClauses.stream().map(ArrayList::new).collect(Collectors.toList());
+                    Set<T> _unreachable = new HashSet<>(localUnreachable);
 
                     if (value) {
                         // Assume the literal is true
-                        clauses.removeIf(clause -> clause.contains(literal));
-                        clauses.forEach(clause -> clause.remove(literal.compliment()));
+                        _clauses.removeIf(clause -> clause.contains(literal));
+                        _clauses.forEach(clause -> clause.remove(literal.compliment()));
                     } else {
                         // Assume the literal is false
-                        clauses.removeIf(clause -> clause.contains(literal.compliment()));
-                        clauses.forEach(clause -> clause.remove(literal));
+                        _clauses.removeIf(clause -> clause.contains(literal.compliment()));
+                        _clauses.forEach(clause -> clause.remove(literal));
                     }
 
-                    Set<T> _unreachable = new HashSet<>(unreachable);
-                    if ((value && literal.pos) || (!value && !literal.pos)) unreachable.remove(literal.var);
-
-                    boolean res = modifiedDPLL(_clauses, _unreachable);
-                    if (res) {
-                        /*
-                         * If the formula is satisfiable under the current assumption, the options reachable under this
-                         * assumption are reachable in at least one valid model. Thus the - now - reachable options need
-                         * to be propagated upwards.
-                         */
-                        unreachable.clear();
-                        unreachable.addAll(_unreachable);
-
-                        if (unreachable.isEmpty()) return true;
-                    }
+                    stack.push(new Pair<>(_clauses, _unreachable));
                 }
             }
         }
 
-        return satisfiable.get();
+        return false;
     }
 
     public static <T> String clauseToBooleanString(Set<Literal<T>> clause) {
@@ -181,16 +185,21 @@ public final class KNFFormula<T> {
 
     public static final class Builder<T> {
 
-        private final Set<Set<Literal<T>>> clauses = new HashSet<>();
+        private final List<List<Literal<T>>> clauses = new ArrayList<>();
         private final Collection<T> vars;
 
         private Builder(Collection<T> vars, boolean varsToClauses) {
             this.vars = vars;
-            if (varsToClauses) vars.stream().map(Literal::pos).map(Collections::singleton).forEach(this::and);
+            if (varsToClauses) vars.stream().map(Literal::pos).map(Collections::singletonList).forEach(this::and);
+        }
+
+        public Builder<T> and(List<Literal<T>> clause) {
+            this.clauses.add(clause);
+            return this;
         }
 
         public Builder<T> and(Set<Literal<T>> clause) {
-            this.clauses.add(clause);
+            this.clauses.add(new ArrayList<>(clause));
             return this;
         }
 
@@ -237,7 +246,7 @@ public final class KNFFormula<T> {
             if (this == obj) return true;
 
             if (obj instanceof Literal) {
-                Literal other = (Literal) obj;
+                Literal<?> other = (Literal<?>) obj;
                 return Objects.equals(this.var, other.var)
                     && this.pos == other.pos;
             }
@@ -248,6 +257,18 @@ public final class KNFFormula<T> {
         @Override
         public String toString() {
             return this.pos ? this.var.toString() : "\u00AC" + this.var.toString();
+        }
+
+    }
+
+    private static final class Pair<L, R> {
+
+        private final L first;
+        private final R second;
+
+        private Pair(L first, R second) {
+            this.first = first;
+            this.second = second;
         }
 
     }

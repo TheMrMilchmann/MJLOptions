@@ -17,8 +17,7 @@ package com.github.themrmilchmann.mjl.options.test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import com.github.themrmilchmann.mjl.options.internal.KNFFormula;
 import org.testng.annotations.Test;
 
@@ -31,36 +30,36 @@ public final class KNFFormulaTests {
     private static final String C = "C";
     private static final String D = "D";
 
-    private static final Set<String> tau = setOf(A, B, C, D);
+    private static final List<String> tau = listOf(A, B, C, D);
 
     @SafeVarargs
-    private static <T> Set<T> setOf(T... ts) {
-        Set<T> tau = new HashSet<>(Arrays.asList(ts));
-        return Collections.unmodifiableSet(tau);
+    private static <T> List<T> listOf(T... ts) {
+        List<T> tau = Arrays.asList(ts);
+        return Collections.unmodifiableList(tau);
     }
 
-    @Test(enabled = false) // Can fail depending on the set implementation. Use only for local testing in dev env!
+    @Test
     public void testToBooleanString() {
         KNFFormula<String> formula = KNFFormula.builder(tau, false).build();
         assertEquals(formula.toBooleanString(), "()");
 
         formula = KNFFormula.builder(tau, false)
-            .and(setOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
-            .and(setOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
-            .and(setOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
+            .and(listOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
+            .and(listOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
+            .and(listOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
             .build();
         assertEquals(formula.toBooleanString(), "((\u00ACA \u2228 B) \u2227 (A \u2228 B) \u2227 (D \u2228 C \u2228 \u00ACB))");
     }
 
-    @Test(enabled = false) // Can fail depending on the set implementation. Use only for local testing in dev env!
+    @Test
     public void testToSetString() {
         KNFFormula<String> formula = KNFFormula.builder(tau, false).build();
         assertEquals(formula.toSetString(), "{}");
 
         formula = KNFFormula.builder(tau, false)
-            .and(setOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
-            .and(setOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
-            .and(setOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
+            .and(listOf(KNFFormula.Literal.neg(A), KNFFormula.Literal.pos(B)))
+            .and(listOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
+            .and(listOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
             .build();
         assertEquals(formula.toBooleanString(), "{{\u00ACA, B}, {A, B}, {D, C, \u00ACB}}");
     }

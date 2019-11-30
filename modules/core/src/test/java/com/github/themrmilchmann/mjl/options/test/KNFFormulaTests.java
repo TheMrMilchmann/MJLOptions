@@ -61,7 +61,7 @@ public final class KNFFormulaTests {
             .and(listOf(KNFFormula.Literal.pos(A), KNFFormula.Literal.pos(B)))
             .and(listOf(KNFFormula.Literal.pos(D), KNFFormula.Literal.pos(C), KNFFormula.Literal.neg(B)))
             .build();
-        assertEquals(formula.toBooleanString(), "{{\u00ACA, B}, {A, B}, {D, C, \u00ACB}}");
+        assertEquals(formula.toSetString(), "{{\u00ACA, B}, {A, B}, {D, C, \u00ACB}}");
     }
 
 }

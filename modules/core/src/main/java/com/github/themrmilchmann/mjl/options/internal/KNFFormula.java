@@ -40,23 +40,23 @@ public final class KNFFormula<T> {
         return new KNFFormula.Builder<>(variables, varsToClauses);
     }
 
-    private final Set<Set<Literal<T>>> clauses;
+    private final List<List<Literal<T>>> clauses;
 
-    private KNFFormula(Set<Set<Literal<T>>> clauses) {
+    private KNFFormula(List<List<Literal<T>>> clauses) {
         this.clauses = clauses;
     }
 
     private Set<T> calculateUnreachableOptions(Set<T> unreachable) {
-        modifiedDPLL(this.clauses.stream().map(ArrayList::new).collect(Collectors.toList()), unreachable);
+        modifiedDPLL(this.clauses, unreachable);
         return unreachable;
     }
 
     public String toBooleanString() {
-        return "(" + this.toString(") \u2227 (", KNFFormula::clauseToBooleanString) + ")";
+        return "(" + this.toString(" \u2227 ", KNFFormula::clauseToBooleanString) + ")";
     }
 
     public String toSetString() {
-        return "{" + this.toString("}, {", KNFFormula::clauseToSetString) + "}";
+        return "{" + this.toString(", ", KNFFormula::clauseToSetString) + "}";
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class KNFFormula<T> {
         return this.toBooleanString();
     }
 
-    private String toString(String delimiter, Function<Set<Literal<T>>, String> conv) {
+    private String toString(String delimiter, Function<List<Literal<T>>, String> conv) {
         StringJoiner stringJoiner = new StringJoiner(delimiter);
         this.clauses.forEach(clause -> stringJoiner.add(conv.apply(clause)));
 
@@ -170,15 +170,15 @@ public final class KNFFormula<T> {
         return false;
     }
 
-    public static <T> String clauseToBooleanString(Set<Literal<T>> clause) {
+    public static <T> String clauseToBooleanString(List<Literal<T>> clause) {
         return "(" + clauseToString(clause, " \u2228 ") + ")";
     }
 
-    public static <T> String clauseToSetString(Set<Literal<T>> clause) {
+    public static <T> String clauseToSetString(List<Literal<T>> clause) {
         return "{" + clauseToString(clause, ", ") + "}";
     }
 
-    private static <T> String clauseToString(Set<Literal<T>> clause, String delimiter) {
+    private static <T> String clauseToString(List<Literal<T>> clause, String delimiter) {
         StringJoiner stringJoiner = new StringJoiner(delimiter);
         clause.forEach(literal -> stringJoiner.add(literal.toString()));
 
@@ -206,7 +206,7 @@ public final class KNFFormula<T> {
         }
 
         public KNFFormula<T> build() {
-            return new KNFFormula<>(this.clauses.stream().map(HashSet::new).collect(Collectors.toSet()));
+            return new KNFFormula<>(this.clauses.stream().map(ArrayList::new).collect(Collectors.toList()));
         }
 
         public Set<T> calculateUnreachableOptions() {

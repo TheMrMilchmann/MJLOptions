@@ -120,6 +120,7 @@ public final class KNFFormula<T> {
 
                 localClauses.removeIf(itClause -> itClause.contains(literal));
                 localClauses.forEach(itClause -> itClause.remove(literal.compliment()));
+                stack.push(pair);
             } else if ((pureLiteral = localClauses.stream()
                 // Create a stream of literals
                 .flatMap(List::stream)
@@ -138,6 +139,7 @@ public final class KNFFormula<T> {
                 if (literal.pos) localUnreachable.remove(literal.var);
 
                 localClauses.removeIf(clause -> clause.contains(literal));
+                stack.push(pair);
             } else {
                 Optional<Map.Entry<List<Literal<T>>, Long>> shortestClause = localClauses.stream()
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()

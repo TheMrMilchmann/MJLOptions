@@ -139,6 +139,16 @@ tasks {
         }
     }
 
+    javadoc {
+        with (options as StandardJavadocDocletOptions) {
+            tags = listOf(
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+            )
+        }
+    }
+
     create<Jar>("javadocJar") {
         dependsOn(javadoc)
 
@@ -201,7 +211,7 @@ publishing {
 }
 
 signing {
-    isRequired = deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE
+    isRequired = (deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE)
     sign(publishing.publications)
 }
 
@@ -211,5 +221,5 @@ dependencies {
 
     implementation(group = "net.bytebuddy", name= "byte-buddy", version = "1.10.1")
 
-    testCompile(group = "org.testng", name = "testng", version = "6.14.3")
+    testImplementation(group = "org.testng", name = "testng", version = "6.14.3")
 }

@@ -135,6 +135,16 @@ tasks {
         }
     }
 
+    javadoc {
+        with (options as StandardJavadocDocletOptions) {
+            tags = listOf(
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+            )
+        }
+    }
+
     create<Jar>("javadocJar") {
         dependsOn(javadoc)
 
@@ -197,6 +207,6 @@ publishing {
 }
 
 signing {
-    isRequired = deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE
+    isRequired = (deployment.type === com.github.themrmilchmann.build.BuildType.RELEASE)
     sign(publishing.publications)
 }

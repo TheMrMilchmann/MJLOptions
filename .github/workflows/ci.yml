@@ -1,101 +1,31 @@
 name: CI
-
 on:
-    push:
-        branches:
-            - master
-    pull_request:
-        branches:
-            - master
+  push:
+    branches-ignore:
+      - 'gh-pages'
+  pull_request:
+    branches-ignore:
+      - 'gh-pages'
 
 jobs:
-#    linux_8:
-#        name: Linux (OpenJDK 8)
-#        runs-on: ubuntu-latest
-#        container: openjdk:8
-#        steps:
-#            - uses: actions/checkout@v1
-#            - name: Gradle Build
-#                run: |
-#                    export JDK9_HOME=$(jdk_switcher home openjdk9)
-#
-#                    ./gradlew --version
-#                    ./gradlew check -Psnapshot
-
-    linux_9:
-        name: Linux (OpenJDK 9)
-        runs-on: ubuntu-latest
-        container: openjdk:9
-        steps:
-            - uses: actions/checkout@v1
-            - name: Gradle Build
-              run: |
-                  ./gradlew --version
-                  ./gradlew check -Psnapshot
-
-    linux_10:
-        name: Linux (OpenJDK 10)
-        runs-on: ubuntu-latest
-        container: openjdk:10
-        steps:
-            - uses: actions/checkout@v1
-            - name: Gradle Build
-              run: |
-                  ./gradlew --version
-                  ./gradlew check -Psnapshot
-
-    linux_11:
-        name: Linux (OpenJDK 11)
-        runs-on: ubuntu-latest
-        container: openjdk:11
-        steps:
-            - uses: actions/checkout@v1
-            - name: Gradle Build
-              run: |
-                  ./gradlew --version
-                  ./gradlew check -Psnapshot
-
-    linux_12:
-        name: Linux (OpenJDK 12)
-        runs-on: ubuntu-latest
-        container: openjdk:12
-        steps:
-            - uses: actions/checkout@v1
-            - name: Gradle Build
-              run: |
-                  ./gradlew --version
-                  ./gradlew check -Psnapshot
-
-    linux_13:
-        name: Linux (OpenJDK 13)
-        runs-on: ubuntu-latest
-        container: openjdk:13
-        steps:
-            - uses: actions/checkout@v1
-            - name: Gradle Build
-              run: |
-                  ./gradlew --version
-                  ./gradlew check -Psnapshot
-
-#    linux_14:
-#        name: Linux (OpenJDK 14)
-#        runs-on: ubuntu-latest
-#        container: openjdk:14
-#        steps:
-#            - uses: actions/checkout@v1
-#            - run: |
-#                  ./gradlew --version
-#                  ./gradlew check -Psnapshot
-
-#    deploy:
-#        name: Deploy
-#        runs-on: ubuntu-latest
-#        container: openjdk:12
-#        steps:
-#            - name: Gradle Build
-#                env:
-#                    sonatypeUsername: ${{ secrets['sonatypeUsername'] }}
-#                    sonatypePassword: ${{ secrets['sonatypePassword'] }}
-#                run: |
-#                    ./gradlew --version
-#                    ./gradlew check -Psnapshot
+  jdk8:
+    name: OpenJDK 8 (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: TheMrMilchmann/install-jdk@v1
+        with:
+          version: '1.8'
+      - uses: TheMrMilchmann/install-jdk@v1
+        with:
+          version: '9'
+          targets: 'JDK_9'
+      - uses: TheMrMilchmann/install-jdk@v1
+        with:
+          version: '13'
+          targets: 'JDK_13'
+      - name: Gradle Build
+        run: |
+          ./gradlew --version --console=plain
+          ./gradlew build -Psnapshot --info -S --console=plain
+          ./gradlew publish -Psnapshot --info -S --console=plain

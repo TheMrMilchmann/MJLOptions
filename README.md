@@ -10,19 +10,45 @@ later).
 MJL Options is a Java implementation of the [sane-argv specification](https://github.com/TheMrMilchmann/sane-argv/).
 
 
-## Installing
+## Building from source
 
-Running the build requires JDK 8 or later. Additionally, a local copy of JDK 9 is required. The buildscript is trying to
-discover this copy by inspecting the following environment variables: `JDK9_HOME`, `JAVA9_HOME`, `JDK_19`, `JDK_9`.
+### Setup
 
-Starting the actual build is simply a matter of invoking the respective Gradle tasks. For example: In order to run a
-full build of the project, call
+A complete build expects multiple JDK installations set up as follows:
+1. JDK 1.8 (used to compile the basic library)
+2. JDK   9 (used to compile the module descriptor)
+3. JDK  13 (used to generate the JavaDoc)
 
-    ./gradlew build
+These JDKs must be made visible to the build process by setting up
+environment variables (or [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties))
+for each JDK version as follows:
 
-Additionally, in order to reproduce snapshot and release builds it is required to supply the build with a an additional
-parameter instead. This should generally be done on a per-build basis by adding `-Psnapshot` or `-Prelease` to the
-command.
+```
+JAVA_HOME="path to JDK 1.8"
+JDK_8="path to JDK 1.8"
+JDK_9="path to JDK 9"
+JDK_13="path to JDK 13"
+```
+
+
+### Building
+
+Once the setup is complete, invoke the respective Gradle tasks using the
+following command on Unix/macOS:
+
+    ./gradlew <tasks>
+
+or the following command on Windows:
+
+    gradlew <tasks>
+
+Important Gradle tasks to remember are:
+- `clean`                   - clean build results
+- `build`                   - assemble and test the Java library
+- `publishToMavenLocal`     - build and install all public artifacts to the
+                              local maven repository
+
+Additionally `tasks` may be used to print a list of all available tasks.
 
 
 ## License

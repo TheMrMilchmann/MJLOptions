@@ -1,15 +1,13 @@
 # MJL Options
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-yellowgreen.svg?style=flat-square)](https://github.com/TheMrMilchmann/MJLOptions/blob/master/LICENSE)
-[![Build Status](https://img.shields.io/travis/TheMrMilchmann/MJLOptions/master.svg?style=flat-square)](https://travis-ci.org/TheMrMilchmann/MJLOptions)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.mjl/mjl-options.svg?style=flat-square&label=maven%20central)](https://maven-badges.herokuapp.com/maven-central/com.github.themrmilchmann.mjl/mjl-options)
+[![License](https://img.shields.io/badge/license-Apache%202.0-yellowgreen.svg?style=flat-square&label=License)](https://github.com/TheMrMilchmann/MJLOptions/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.mjl/mjl-options.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/com.github.themrmilchmann.mjl/mjl-options)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.mjl/mjl-options.svg?style=flat-square&label=JavaDoc&color=blue)](https://javadoc.io/doc/com.github.themrmilchmann.mjl/mjl-options)
 
 A **m**inmal **J**ava **l**ibrary which provides a convenient way to parse command line parameters (for Java 8 and
 later).
 
 MJL Options is a Java implementation of the [sane-argv specification](https://github.com/TheMrMilchmann/sane-argv/).
-
-[JavaDoc for MJL Options.](https://themrmilchmann.github.io/MJLOptions/)
 
 
 ## Installing
